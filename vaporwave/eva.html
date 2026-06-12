@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>終 劇</title>
+  <style>
+    /* 全体の背景：エヴァED特有の暗い空間 */
+    body {
+      margin: 0; height: 100vh;
+      background-color: #030508; color: #fff;
+      font-family: "ＭＳ Ｐ明朝", "MS PMincho", "游明朝", serif;
+      overflow: hidden; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; user-select: none;
+    }
+
+    /* スタート画面 */
+    #start-screen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #000; display: flex; justify-content: center; align-items: center;
+      z-index: 999; cursor: pointer; transition: opacity 2s ease;
+    }
+    .title-card { font-size: 6rem; font-weight: bold; color: #fff; letter-spacing: 20px; text-align: center; }
+    .click-prompt { font-size: 1.2rem; margin-top: 30px; letter-spacing: 5px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* 背景の巨大な月と水面 */
+    .moon {
+      position: absolute; top: -15vh; left: 50%; transform: translateX(-50%);
+      width: 80vw; height: 80vw; max-width: 900px; max-height: 900px;
+      background-image: url('../img/moon.png'); background-size: contain;
+      background-position: center; background-repeat: no-repeat;
+      filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
+      opacity: 0; transition: opacity 3s ease 1s; z-index: 1;
+    }
+    .water {
+      position: absolute; bottom: 0; width: 100%; height: 35vh;
+      background: linear-gradient(0deg, #021a3b, #030508);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      opacity: 0; transition: opacity 3s ease 1s; z-index: 2;
+    }
+    .eva-text {
+      position: absolute; top: 45%; font-size: 2.5rem; letter-spacing: 15px;
+      opacity: 0; transition: opacity 4s ease 2s; z-index: 3;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+    }
+
+    /* =========================================
+       ★ 超リアル改修：ブラウン管テレビ ★
+       ========================================= */
+    .crt-tv-wrapper {
+      position: fixed; bottom: 30px; right: 30px;
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 2s ease 3s, transform 2s ease 3s;
+      z-index: 100;
+    }
+
+    /* テレビのプラスチック外装 */
+    .crt-tv {
+      position: relative;
+      width: 380px; height: 260px;
+      background: #2b2b2b; /* レトロな濃いグレー */
+      border-radius: 15px;
+      box-shadow: 
+        inset 2px 2px 5px rgba(255,255,255,0.1),
+        inset -5px -5px 15px rgba(0,0,0,0.6),
+        15px 15px 25px rgba(0,0,0,0.8);
+      display: flex; padding: 15px; box-sizing: border-box; gap: 15px;
+    }
+
+    /* V字アンテナ */
+    .tv-antenna {
+      position: absolute; top: -60px; left: 80px; width: 100px; height: 60px; z-index: -1;
+    }
+    .tv-antenna::before, .tv-antenna::after {
+      content: ''; position: absolute; bottom: 0; width: 4px; height: 80px;
+      background: #a0a0a0; border-radius: 2px; box-shadow: inset -1px 0 #555;
+    }
+    .tv-antenna::before { left: 10px; transform: rotate(-35deg); transform-origin: bottom center; }
+    .tv-antenna::after { right: 10px; transform: rotate(35deg); transform-origin: bottom center; }
+
+    /* 黒いベゼル（画面の周りの枠） */
+    .tv-bezel {
+      flex: 1; background: #0a0a0a;
+      border-radius: 30px 30px 40px 40px; padding: 10px;
+      box-shadow: inset 5px 5px 15px rgba(0,0,0,0.9), inset -2px -2px 5px rgba(255,255,255,0.05), 0 0 5px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    /* ブラウン管のガラス面（画面の膨らみを再現） */
+    .tv-tube {
+      position: relative; width: 100%; height: 100%;
+      background: #000;
+      border-radius: 50% / 15%; /* ここがブラウン管特有のカーブ */
+      overflow: hidden;
+      box-shadow: inset 0 0 20px rgba(0,0,0,1);
+    }
+
+    /* YouTube埋め込み（クリック可能） */
+    .tv-tube iframe {
+      position: absolute; top: 50%; left: 50%;
+      width: 130%; height: 130%; /* 枠に合わせて拡大し、黒帯を消す */
+      transform: translate(-50%, -50%);
+      border: none;
+    }
+
+    /* ガラスの反射・走査線・フチの影（クリックを貫通させる） */
+    .tv-effects {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none; /* ★ これで奥のYouTubeがクリック可能に ★ */
+      z-index: 10;
+      border-radius: 50% / 15%;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+    }
+    /* 走査線 */
+    .tv-effects::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%); background-size: 100% 4px;
+    }
+    /* ガラスの光の反射 */
+    .tv-effects::after {
+      content: ''; position: absolute; top: -20%; left: -20%; width: 140%; height: 140%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15) 0%, transparent 40%);
+    }
+
+    /* テレビ右側の操作パネル（ダイヤルやスピーカー） */
+    .tv-panel {
+      width: 45px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 5px 0;
+    }
+    .speaker {
+      width: 35px; height: 90px;
+      background: repeating-linear-gradient(to bottom, #111, #111 3px, #2b2b2b 4px, #2b2b2b 6px);
+      border-radius: 3px; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.8);
+    }
+    .dial {
+      width: 35px; height: 35px; background: #1a1a1a; border-radius: 50%;
+      box-shadow: inset 2px 2px 5px #444, 2px 2px 5px rgba(0,0,0,0.8); position: relative;
+    }
+    .dial::after {
+      content: ''; position: absolute; top: 5px; left: 16px; width: 3px; height: 10px; background: #ddd; border-radius: 2px;
+    }
+    .dial:nth-child(3)::after { transform: rotate(45deg); transform-origin: center 12px; } /* 下のダイヤルだけ少し回しておく */
+    .power-btn {
+      width: 25px; height: 15px; background: #c00; border-radius: 3px;
+      box-shadow: inset 1px 1px 3px #f55, 1px 1px 3px rgba(0,0,0,0.8);
+    }
+
+    /* 現実への帰還ボタン */
+    .return-btn {
+      position: fixed; bottom: 30px; left: 30px; font-size: 1.2rem; color: #777; border: 1px solid #777;
+      padding: 10px 20px; background: transparent; font-family: "ＭＳ Ｐ明朝", "MS PMincho", serif;
+      text-decoration: none; opacity: 0; transition: all 1s ease 5s; z-index: 100;
+    }
+    .return-btn:hover { background: #fff; color: #000; border-color: #fff; }
+
+    /* スマホ向け調整 */
+    @media (max-width: 600px) {
+      .title-card { font-size: 4rem; }
+      .eva-text { font-size: 1.5rem; top: 40%; }
+      .moon { width: 120vw; height: 120vw; top: -5vh; }
+      
+      .crt-tv-wrapper { bottom: 100px; right: 50%; transform: translateX(50%) translateY(30px); }
+      /* スマホ用にテレビを少し縮小 */
+      .crt-tv { width: 320px; height: 220px; padding: 10px; gap: 10px; }
+      .tv-antenna { left: 50px; transform: scale(0.8); }
+      .tv-panel { width: 35px; }
+      .speaker { height: 70px; }
+      .dial { width: 28px; height: 28px; }
+      .dial::after { left: 12px; }
+      .power-btn { width: 20px; height: 12px; }
+      
+      .return-btn { bottom: 20px; left: 50%; transform: translateX(-50%); }
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+  (function(){
+    // ===== achievements-lite: mark page view (this page doesn't load app.js) =====
+    const ACH_KEY = "tomoponz_ach_v1";
+    function achLoad(){
+      try{
+        const raw = localStorage.getItem(ACH_KEY);
+        if(!raw) return {v:1, pages:{}, counters:{}, unlocked:{}};
+        const o = JSON.parse(raw);
+        if(!o || typeof o !== "object") return {v:1, pages:{}, counters:{}, unlocked:{}};
+        o.v = 1;
+        o.pages = (o.pages && typeof o.pages === "object") ? o.pages : {};
+        o.counters = (o.counters && typeof o.counters === "object") ? o.counters : {};
+        o.unlocked = (o.unlocked && typeof o.unlocked === "object") ? o.unlocked : {};
+        return o;
+      }catch(_){ return {v:1, pages:{}, counters:{}, unlocked:{}}; }
+    }
+    function achSave(s){ try{ localStorage.setItem(ACH_KEY, JSON.stringify(s)); }catch(_){ } }
+    function markPage(){
+      try{
+        const path = String(location.pathname||"").replace(/^\/+/, "");
+        if(!path || path.endsWith("shell.html")) return;
+        const s = achLoad();
+        s.counters.visits = (Number(s.counters.visits)||0) + 1;
+        s.pages[path] = Date.now();
+        achSave(s);
+      }catch(_){ }
+    }
+
+    // ===== eva gate: only when all "VIRTUAL" tabs are closed =====
+    const KEY = "tpz_virtual_instances_v1";
+    const TTL = 15000;
+
+    function readMap(){
+      try{
+        const raw = localStorage.getItem(KEY);
+        const o = raw ? JSON.parse(raw) : {};
+        return (o && typeof o === "object") ? o : {};
+      }catch(_){ return {}; }
+    }
+    function countActive(){
+      const now = Date.now();
+      const map = readMap();
+      let n = 0;
+      try{
+        for(const k in map){
+          const ts = Number(map[k]) || 0;
+          if(ts && (now - ts) <= TTL) n++;
+        }
+      }catch(_){ }
+      return n;
+    }
+
+    const active = countActive();
+    if(active > 0){
+      // block: show message and do not proceed
+      document.addEventListener('DOMContentLoaded', ()=>{
+        document.body.innerHTML = `
+          <div style="min-height:100vh;display:grid;place-items:center;padding:28px;background:#030508;color:#fff;font-family:serif;">
+            <div style="max-width:720px;width:100%;border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px 18px 14px;background:rgba(255,255,255,.04);">
+              <div style="opacity:.8;font-size:12px;letter-spacing:.12em;">ACCESS DENIED</div>
+              <h1 style="margin:10px 0 8px;font-size:28px;line-height:1.25;">VIRTUAL のタブを全部消してから来い。</h1>
+              <p style="margin:0 0 12px;opacity:.78;line-height:1.8;font-size:14px;">（まだ <b>${active}</b> 個の “VIRTUAL” が生きている）</p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+                <a href="../index.html" style="display:inline-block;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);color:#fff;text-decoration:none;">ホームへ戻る</a>
+                <a href="../gallery.html" style="display:inline-block;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);color:#fff;text-decoration:none;">ネタ置き場</a>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      return;
+    }
+
+    // allowed
+    markPage();
+  })();
+  </script>
+
+
+  <div id="start-screen" onclick="startEnding()">
+    <div class="title-card">
+      終 劇
+      <div class="click-prompt">（画面をクリック）</div>
+    </div>
+  </div>
+
+  <div class="moon" id="moon"></div>
+  <div class="water" id="water"></div>
+  <div class="eva-text" id="center-text">ＦＬＹ　ＭＥ　ＴＯ　ＴＨＥ　ＭＯＯＮ</div>
+
+  <div class="crt-tv-wrapper" id="tv-container">
+    <div class="tv-antenna"></div>
+    <div class="crt-tv">
+      <div class="tv-bezel">
+        <div class="tv-tube">
+          <div id="yt-placeholder" style="width: 100%; height: 100%;"></div>
+          <div class="tv-effects"></div>
+        </div>
+      </div>
+      <div class="tv-panel">
+        <div class="speaker"></div>
+        <div class="dial"></div>
+        <div class="dial"></div>
+        <div class="power-btn"></div>
+      </div>
+    </div>
+  </div>
+
+  <a href="../index.html" class="return-btn" id="return-btn">現 実 へ 帰 還</a>
+
+  <script>
+    function postToShell(msg){
+      try{
+        if(window.parent && window.parent !== window){
+          window.parent.postMessage(msg, location.origin);
+        }
+      }catch(_){ }
+    }
+
+    // 没入：shellのメニューを隠す
+    postToShell({type:"IMMERSION", active:true});
+
+    window.addEventListener('beforeunload', ()=>{ postToShell({type:"IMMERSION", active:false}); });
+
+    function startEnding() {
+      const startScreen = document.getElementById('start-screen');
+      startScreen.style.opacity = '0';
+      setTimeout(() => { startScreen.style.display = 'none'; }, 2000);
+      
+      const ytId = "w2xi6Qjv8mw";
+      const iframeHtml = `<iframe src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&controls=0&disablekb=1&modestbranding=1&loop=1&playlist=${ytId}&fs=0&playsinline=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+      document.getElementById('yt-placeholder').innerHTML = iframeHtml;
+      
+      document.getElementById('moon').style.opacity = '1';
+      document.getElementById('water').style.opacity = '1';
+      document.getElementById('center-text').style.opacity = '1';
+      
+      const tvWrapper = document.getElementById('tv-container');
+      tvWrapper.style.opacity = '1';
+      
+      if (window.innerWidth <= 600) {
+        tvWrapper.style.transform = 'translateX(50%) translateY(0)';
+      } else {
+        tvWrapper.style.transform = 'translateY(0)';
+      }
+
+      document.getElementById('return-btn').style.opacity = '1';
+    }
+  
+
+    // 現実への帰還：shell(iframe) のときは親に遷移を委譲（URL同期）
+    (function(){
+      const btn = document.getElementById("return-btn");
+      if(!btn) return;
+      btn.addEventListener("click", (e)=>{
+        try{
+          if(window.parent && window.parent !== window){
+            e.preventDefault();
+            postToShell({type:"NAV", href: new URL("../index.html", location.href).href});
+          }
+        }catch(_){ }
+      });
+    })();
+
+
+    // 隠し導線：TVの赤い電源ボタン連打（ヒントは出さない）
+    // 5回 → sweetdeath.html（ただし 9回まで続けたら walkman.html を優先）
+    (function(){
+      const power = document.querySelector(".power-btn");
+      if(!power) return;
+
+      let count = 0;
+      let last = 0;
+      let t = null;
+
+      const reset = ()=>{
+        count = 0;
+        last = 0;
+        if(t){ clearTimeout(t); t = null; }
+      };
+
+      const go = (rel)=>{
+        try{
+          // immersive解除
+          postToShell({type:"IMMERSION", active:false});
+          if(window.parent && window.parent !== window){
+            postToShell({type:"NAV", href: new URL(rel, location.href).href});
+          }else{
+            location.href = rel;
+          }
+        }catch(_){
+          location.href = rel;
+        }
+      };
+
+      const hit = ()=>{
+        const now = Date.now();
+        // 連打判定：間が空いたらリセット
+        if(now - last > 1200){
+          count = 0;
+          if(t){ clearTimeout(t); t = null; }
+        }
+        last = now;
+        count++;
+
+        if(count === 5){
+          // 9回が来る可能性があるので少し待つ
+          if(t) clearTimeout(t);
+          t = setTimeout(()=>{
+            if(count === 5) go("sweetdeath.html");
+            reset();
+          }, 900);
+        }else if(count === 9){
+          if(t) clearTimeout(t);
+          go("walkman.html");
+          reset();
+        }
+      };
+
+      const onPress = (e)=>{
+        try{ e.stopPropagation(); }catch(_){}
+        hit();
+      };
+
+      // click/touch/pointer に対応（スマホも）
+      power.addEventListener("click", onPress, true);
+      power.addEventListener("pointerdown", onPress, true);
+      power.addEventListener("touchstart", onPress, {capture:true, passive:true});
+    })();
+
+  </script>
+</body>
+</html>

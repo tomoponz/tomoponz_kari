@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Level 0 - The Backrooms</title>
+  
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="../assets/js/fps-player.js"></script>
+  <script src="../assets/js/aframe-gltf-scatter.js?v=20260222"></script>
+  <script defer src="../assets/js/security-lite.js?v=20260222"></script>
+  
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* ビデオカメラ風UIのスタイル（変更なし） */
+    #camcorder-ui {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 55; color: white;
+      font-family: 'Courier New', Courier, monospace;
+      text-shadow: 2px 2px 0px black;
+    }
+    .cam-rec { position: absolute; top: 30px; left: 40px; font-size: 28px; font-weight: bold; }
+    .cam-rec span { color: red; animation: blink 1s infinite; }
+    .cam-battery { position: absolute; top: 30px; right: 40px; font-size: 24px; border: 2px solid white; padding: 2px 8px; }
+    .cam-timecode { position: absolute; bottom: 40px; left: 40px; font-size: 28px; letter-spacing: 2px; }
+    .cam-date { position: absolute; bottom: 40px; right: 40px; font-size: 28px; letter-spacing: 2px; }
+    .cam-center-cross { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; opacity: 0.5; }
+    @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+  
+    /* FPS UI がカムコーダUIと被らないように（fps-player.js のCSS変数を利用） */
+    :root{ --fps-ui-bottom: 64px; }
+
+    @media (max-width: 520px){
+      .cam-rec{ top:16px; left:16px; font-size:18px; }
+      .cam-battery{ top:16px; right:16px; font-size:16px; padding:2px 6px; }
+      .cam-timecode{ bottom:18px; left:16px; font-size:18px; letter-spacing:1px; }
+      .cam-date{ bottom:18px; right:16px; font-size:18px; letter-spacing:1px; }
+      .cam-center-cross{ font-size:18px; }
+    }
+
+  </style>
+
+  <script>
+    // 1. 足音再生
+    AFRAME.registerComponent('footstep-sound', {
+      init: function () {
+        this.lastPos = new THREE.Vector3();
+        this.el.object3D.getWorldPosition(this.lastPos);
+        this.audio = document.getElementById("audio-footstep");
+        this.isWalking = false;
+      },
+      tick: function () {
+        if (!this.audio || !window.audioUnlocked) return;
+        try{ if(localStorage.getItem('audio_enabled') === '0'){ this.audio.pause(); this.isWalking=false; return; } }catch(_){ }
+        var currentPos = new THREE.Vector3();
+        this.el.object3D.getWorldPosition(currentPos);
+        var dx = currentPos.x - this.lastPos.x;
+        var dz = currentPos.z - this.lastPos.z;
+        var dist = dx * dx + dz * dz;
+
+        if (dist > 0.00005) {
+          if (!this.isWalking) { this.audio.play().catch(()=>{}); this.isWalking = true; }
+        } else {
+          if (this.isWalking) { this.audio.pause(); this.isWalking = false; }
+        }
+        this.lastPos.copy(currentPos);
+      }
+    });
+
+    // 2. 壁すり抜け防止
+    AFRAME.registerComponent('wall-collider', {
+      init: function () {
+        this.raycaster = new THREE.Raycaster();
+        this.directions = [ new THREE.Vector3(1, 0, 0), new THREE.Vector3(-1, 0, 0), new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, -1) ];
+        this.lastPos = new THREE.Vector3();
+        this.el.object3D.getWorldPosition(this.lastPos);
+
+        // ★最適化：毎tickで全mesh探索しない（model-loaded時にキャッシュ）
+        this.meshes = [];
+        this.refreshMeshes = () => {
+          const wallEls = this.el.sceneEl.querySelectorAll('.collidable');
+          const meshes = [];
+          wallEls.forEach(wall => {
+            if (!wall.object3D) return;
+            wall.object3D.traverse(node => { if (node && node.isMesh) meshes.push(node); });
+          });
+          this.meshes = meshes;
+        };
+
+        // 既存 & これから読み込まれるモデルの両方に対応
+        const hook = () => {
+          const wallEls = this.el.sceneEl.querySelectorAll('.collidable');
+          wallEls.forEach(wall => {
+            wall.addEventListener('model-loaded', this.refreshMeshes);
+          });
+        };
+        // scene ready後にhook
+        if (this.el.sceneEl.hasLoaded) hook();
+        else this.el.sceneEl.addEventListener('loaded', hook);
+
+        setTimeout(this.refreshMeshes, 800);
+        setTimeout(this.refreshMeshes, 2500);
+      },
+      tick: function () {
+        var el = this.el; var pos = el.object3D.position;
+        var meshes = this.meshes || [];
+        if (meshes.length === 0) { this.lastPos.copy(pos); return; }
+        var collision = false;
+        for (var i = 0; i < this.directions.length; i++) {
+           this.raycaster.set(pos, this.directions[i]);
+           var intersects = this.raycaster.intersectObjects(meshes, true);
+           if (intersects.length > 0 && intersects[0].distance < 0.6) { collision = true; break; }
+        }
+        if (collision) { el.object3D.position.copy(this.lastPos); } else { this.lastPos.copy(pos); }
+      }
+    });
+
+    // 3. 近づくと消える影
+    AFRAME.registerComponent('shadow-watcher', {
+      tick: function () {
+        var player = document.getElementById('rig'); if (!player) return;
+        var dist = this.el.object3D.position.distanceTo(player.object3D.position);
+        if (dist < 6) { this.el.setAttribute('visible', 'false'); } else { this.el.setAttribute('visible', 'true'); }
+      }
+    });
+
+    // 4. バグって激しく振動する演出
+    AFRAME.registerComponent('jitter', {
+      schema: { amount: {type: 'number', default: 0.05} },
+      tick: function () {
+        if (!this.basePos) { this.basePos = this.el.object3D.position.clone(); }
+        this.el.object3D.position.set(
+          this.basePos.x + (Math.random() - 0.5) * this.data.amount,
+          this.basePos.y + (Math.random() - 0.5) * this.data.amount,
+          this.basePos.z + (Math.random() - 0.5) * this.data.amount
+        );
+      }
+    });
+
+    // 5. 3Dオブジェクトのクリックイベント
+    AFRAME.registerComponent('clickable-link', {
+      schema: { url: { type: 'string' } },
+      init: function () {
+        this.el.addEventListener('click', () => { window.location.href = this.data.url; });
+        this.el.addEventListener('mouseenter', () => { document.querySelector('a-cursor').setAttribute('color', '#00ff00'); });
+        this.el.addEventListener('mouseleave', () => { document.querySelector('a-cursor').setAttribute('color', '#ff0000'); });
+      }
+    });
+  
+
+// 6. 近づくと鳴るループ音（お経など）
+AFRAME.registerComponent('proximity-loop-sound', {
+  schema: {
+    audioId: {type: 'string', default: 'audio-okyou'},
+    target: {type: 'selector', default: '#rig'},
+    radius: {type: 'number', default: 10},
+    boost: {type: 'number', default: 2.2}
+  },
+  init: function () {
+    this.audio = document.getElementById(this.data.audioId);
+    this.playing = false;
+    this._vT = new THREE.Vector3();
+    this._vS = new THREE.Vector3();
+    if (this.audio) {
+      this.audio.volume = 0;
+      this.audio.dataset.basevol = '1';
+    }
+  },
+  tick: function () {
+    if (!this.audio || !window.audioUnlocked) return;
+        try{ if(localStorage.getItem('audio_enabled') === '0'){ this.audio.pause(); this.isWalking=false; return; } }catch(_){ }
+    var target = this.data.target;
+    if (!target) return;
+    target.object3D.getWorldPosition(this._vT);
+    this.el.object3D.getWorldPosition(this._vS);
+    var dist = this._vT.distanceTo(this._vS);
+
+    var master = (window.__fpsSettings && typeof window.__fpsSettings__.volume === 'number') ? window.__fpsSettings__.volume : 1;
+    var k = Math.max(0, Math.min(1, (this.data.radius - dist) / (this.data.radius * 0.6)));
+    var v = Math.min(1, k) * master;
+
+    this.audio.volume = v;
+
+    if (v > 0.01) {
+      if (!this.playing) {
+        if (window.__boostAudio) { try { window.__boostAudio(this.audio, this.data.boost); } catch(e){} }
+        this.audio.play().catch(()=>{});
+        this.playing = true;
+      }
+    } else {
+      if (this.playing) { this.audio.pause(); this.playing = false; }
+    }
+  }
+});
+</script>
+
+  <style>
+    /* Controls hint toast */
+    #controlsHint{
+      position: fixed;
+      left: 50%;
+      top: 14px;
+      transform: translateX(-50%);
+      z-index: 99999;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.62);
+      color: rgba(255,255,255,.92);
+      font-size: 13px;
+      letter-spacing: .04em;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 18px 80px rgba(0,0,0,.55);
+      max-width: min(520px, calc(100vw - 24px));
+    }
+    #controlsHint small{ display:block; opacity:.75; margin-top:4px; }
+    #controlsHint.hide{ opacity:0; transform: translateX(-50%) translateY(-6px); transition: opacity .45s ease, transform .45s ease; pointer-events:none; }
+    @media (max-width: 820px){
+      #controlsHint{ top: calc(10px + env(safe-area-inset-top)); font-size: 12px; }
+    }
+  </style>
+
+</head>
+<body>
+  <div id=\"controlsHint\" role=\"status\" aria-live=\"polite\"></div>
+
+  <div id="ui-overlay">
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <div id="camcorder-ui">
+      <div class="cam-rec"><span>●</span> REC</div>
+      <div class="cam-battery">■■■</div>
+      <div class="cam-center-cross">[ &nbsp; &nbsp; &nbsp; ]</div>
+      <div class="cam-timecode" id="tc-display">00:00:00</div>
+      <div class="cam-date">1996.07.14</div>
+    </div>
+
+    <div class="level-doors" style="top: 80px;">
+      <p style="margin: 0 0 10px 0; color: #8b0000; font-weight: bold; font-size: 14px;">🚪 別の階層への扉</p>
+      <a href="../dreamcore/index.html" class="door-link">▶ Level 1: Dreamcore</a>
+      <a href="../vaporwave/index.html" class="door-link">▶ Level 2: Vaporwave</a>
+      <a href="../aero/index.html" class="door-link">▶ Level 3: Frutiger Aero</a>
+    </div>
+
+    <a href="../index.html" class="exit-sign" style="bottom: 90px;">EXIT ➔</a>
+    <img id="daisy-btn" src="../img/daisy%20bell.png" alt="Daisy Bell" style="bottom: 80px;">
+
+    <!-- XR: VR / AR -->
+    <div class="xrBar">
+      <button id="btnVR" class="xrBtn" type="button">VR</button>
+      <button id="btnAR" class="xrBtn" type="button">AR</button>
+    </div>
+  </div>
+
+  <audio id="audio-buzz" src="../assets/sfx/backrooms-buzzing-sound-effect.mp3" loop></audio>
+  <audio id="audio-daisy" src="../assets/sfx/daisy-bell.mp3"></audio>
+  <audio id="audio-okyou" src="../assets/sfx/2okyou.wav" loop></audio>
+  <audio id="audio-footstep" src="../assets/sfx/walking%20on%20the%20carpet.mp3" loop></audio>
+
+  <a-scene fog="type: exponential; color: #d1c7a3; density: 0.1">
+    
+    <a-assets>
+      <a-asset-item id="backrooms-model" src="../assets/models/original_backrooms.glb"></a-asset-item>
+      <a-asset-item id="car-model" src="../assets/models/destroyed_car_03__backrooms_car_gameready.glb"></a-asset-item>
+      <a-asset-item id="bacteria-model" src="../assets/models/bacteria_-_kane_pixels_backrooms.glb"></a-asset-item>
+      <a-asset-item id="sculpture-model" src="../assets/models/sculpture_bust_of_roza_loewenfeld.glb"></a-asset-item>
+      <a-asset-item id="warning-signs-model" src="../assets/models/warning_signs_set.glb"></a-asset-item>
+    </a-assets>
+
+    <a-entity id="rig" position="0 1.0 0" fps-player="jumpVelocity: 0.187" wall-collider>
+      <a-entity camera position="0 0 0" footstep-sound>
+        <a-cursor color="#ff0000" scale="0.6 0.6 0.6" raycaster="objects: .clickable"></a-cursor>
+      </a-entity>
+    </a-entity>
+
+    <a-gltf-model src="#backrooms-model" class="collidable" position="0 0 0" scale="1 1 1"></a-gltf-model>
+
+    <a-gltf-model src="#car-model" class="collidable" position="3 0 -3" rotation="0 -45 0" scale="1.6 1.6 1.6"></a-gltf-model>
+
+    
+
+    <!-- 警戒標識セット（warning_signs_set.glb）：標識ごとにばらして密集配置 -->
+    <a-entity id="warning-signs" position="-2 0 -7" rotation="0 30 0" scale="0.15 0.15 0.15"
+              scatter-gltf-children="src:#warning-signs-model; spread:1.05" proximity-loop-sound="radius: 9.5">
+    </a-entity>
+    <a-entity position="2.5 0 -2.5" jitter="amount: 0.04">
+      <a-gltf-model src="#bacteria-model" scale="0.4 0.4 0.4"></a-gltf-model>
+      <a-box class="clickable" visible="false" position="0 1 0" scale="0.8 2 0.8" 
+             clickable-link="url: https://backrooms.fandom.com/wiki/Backrooms_Wiki"></a-box>
+    </a-entity>
+
+    <!-- 彫刻（位置を少しずらす） -->
+    <a-entity position="1.4 1.8 -3.2"
+              animation__rot="property: rotation; to: 0 360 0; dur: 5000; loop: true; easing: linear"
+              animation__pos="property: position; to: 1.4 2.1 -3.2; dur: 2000; dir: alternate; loop: true; easing: easeInOutSine">
+      
+      <a-gltf-model src="#sculpture-model" position="0 -1.5 0" scale="0.003 0.003 0.003"></a-gltf-model>
+      
+      <a-box class="clickable" visible="false" position="0 -0.7 0" scale="1.5 1.5 1.5" 
+             clickable-link="url: ../vaporwave/index.html"></a-box>
+    </a-entity>
+
+    <a-entity position="-1 1.0 -12" shadow-watcher>
+      <a-cylinder color="#050505" height="1.8" radius="0.3"></a-cylinder>
+      <a-sphere color="#ff0000" radius="0.05" position="-0.1 0.7 0.25"></a-sphere>
+      <a-sphere color="#ff0000" radius="0.05" position="0.1 0.7 0.25"></a-sphere>
+    </a-entity>
+
+    <a-light type="ambient" color="#ffffff" intensity="0.3"></a-light>
+    <a-light type="point" color="#fffae6" position="0 2.5 0" intensity="0.8" distance="15" 
+             animation="property: intensity; from: 0.8; to: 0.3; dur: 120; dir: alternate; loop: true"></a-light>
+
+  </a-scene>
+
+  <script>
+    window.audioUnlocked = false;
+    // このページのデフォルト（dreamcoreと操作を揃える）
+    window.__fpsSettings__ = window.__fpsSettings__ || { moveSpeed: 0.08, lookSpeed: 0.05, volume: 0.8 };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const tcDisplay = document.getElementById("tc-display");
+      setInterval(() => {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        const s = String(now.getSeconds()).padStart(2, '0');
+        tcDisplay.innerText = `${h}:${m}:${s}`;
+      }, 1000);
+      const buzz = document.getElementById("audio-buzz");
+      const daisy = document.getElementById("audio-daisy");
+      const okyou = document.getElementById("audio-okyou");
+      const footstep = document.getElementById("audio-footstep");
+      const daisyBtn = document.getElementById("daisy-btn");
+      buzz.volume = 0.3; daisy.volume = 0.8; footstep.volume = 0.6; if(okyou){ okyou.volume = 0.0; } 
+
+      // ★ master volume スライダーで相対関係を保てるように basevol を保存
+      [buzz, daisy, footstep, okyou].filter(Boolean).forEach(a => { if (a && !a.dataset.basevol) a.dataset.basevol = String(a.volume); });
+
+      const startAmbiance = () => {
+        if (window.audioUnlocked) return; window.audioUnlocked = true;
+        buzz.play().catch(console.error); daisy.play().catch(console.error);
+      };
+
+      // ★ ui-overlay は pointer-events:none なので、document で拾う
+      document.addEventListener("pointerdown", startAmbiance, { once: true, capture: true });
+      document.addEventListener("touchstart", startAmbiance, { once: true, capture: true, passive: true });
+      daisyBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); daisy.currentTime = 0; daisy.play();
+        // CSSでホバー時の濃さを1.0にするため、フィルターは削除します
+      });
+
+      // ===== VR / AR (mobile friendly) =====
+      const scene = document.querySelector('a-scene');
+      const btnVR = document.getElementById('btnVR');
+      const btnAR = document.getElementById('btnAR');
+
+      async function ensureMotionPerm(){
+        // iOS 13+ device motion permission
+        try{
+          const D = window.DeviceOrientationEvent;
+          if(D && typeof D.requestPermission === 'function'){
+            const r = await D.requestPermission();
+            return r === 'granted';
+          }
+        }catch(_){ }
+        return true;
+      }
+
+      if(btnVR){
+        btnVR.addEventListener('click', async (e)=>{
+          e.stopPropagation();
+          await ensureMotionPerm();
+          try{
+            if(scene && typeof scene.enterVR === 'function') scene.enterVR();
+            else alert('VRモードに入れません（対応ブラウザ: Chrome/Quest など）');
+          }catch(_){
+            alert('VRモードに入れませんでした');
+          }
+        });
+      }
+
+      if(btnAR){
+        btnAR.addEventListener('click', async (e)=>{
+          e.stopPropagation();
+          await ensureMotionPerm();
+          // A-Frame の enterAR がある環境なら試す。無い場合は彫刻ビューワーへ。
+          try{
+            if(scene && typeof scene.enterAR === 'function'){
+              scene.enterAR();
+            }else{
+              window.location.href = './sculpture.html?ar=1';
+            }
+          }catch(_){
+            window.location.href = './sculpture.html?ar=1';
+          }
+        });
+      }
+    });
+  </script>
+
+  <script>
+    (function(){
+      const el = document.getElementById('controlsHint');
+      if(!el) return;
+      const isTouch = matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window);
+      if(isTouch){
+        el.innerHTML = '操作：左スティックで移動／右スティックで視点 <small>（スマホ：画面の操作パッドを使う）</small>';
+      }else{
+        el.innerHTML = '操作：WASDで移動／矢印キーで視点 <small>（Escで一旦止められる場合あり）</small>';
+      }
+      // auto hide
+      setTimeout(()=>{ el.classList.add('hide'); }, 4200);
+    })();
+  </script>
+
+</body>
+</html>

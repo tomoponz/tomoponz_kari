@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ｖ Ｉ Ｒ Ｔ Ｕ Ａ Ｌ　Ｄ Ｅ Ｓ Ｋ Ｔ Ｏ Ｐ</title>
+  
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script defer src="../assets/js/security-lite.js?v=20260222"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <div class="desktop-bg"></div>
+  
+  <div class="sun"></div>
+  <div class="grid-container"><div class="grid"></div></div>
+
+  <img src="../img/Palm%20tree%20neon.png" class="neon-palm palm-left" alt="Neon Palm Left">
+  <img src="../img/Palm%20tree%20neon.png" class="neon-palm palm-right" alt="Neon Palm Right">
+
+  <a-scene embedded renderer="alpha: true" vr-mode-ui="enabled: false" class="aframe-overlay">
+    <a-assets>
+      <a-asset-item id="statue-glb" src="../assets/models/white_mesh.glb"></a-asset-item>
+      <img id="marble-tex" src="../img/Marble001_2K-JPG_Color.jpg">
+    </a-assets>
+    <a-entity camera position="0 1.6 4" look-controls="enabled: false" wasd-controls="enabled: false"></a-entity>
+    <a-entity position="0 0.5 0" 
+              animation="property: rotation; to: 0 360 0; dur: 10000; loop: true; easing: linear" 
+              animation__float="property: position; to: 0 0.8 0; dur: 4000; dir: alternate; loop: true; easing: easeInOutSine">
+      <a-cylinder src="#marble-tex" radius="0.6" height="1.5" position="0 0 0" repeat="2 1"></a-cylinder>
+      <a-gltf-model src="#statue-glb" position="0 1.6 0" scale="1.2 1.2 1.2"></a-gltf-model>
+    </a-entity>
+    <a-light type="ambient" color="#2b2b2b"></a-light>
+    <a-light type="directional" color="#ff71ce" intensity="2.0" position="2 1 1"></a-light>
+    <a-light type="directional" color="#01cdfe" intensity="2.0" position="-2 1 1"></a-light>
+  </a-scene>
+
+  <div class="vhs-glitch"></div>
+  <div class="scanlines"></div>
+
+  <div class="desktop-icons">
+    <div class="icon" ondblclick="location.href='../liminal/index.html'" onclick="if(window.innerWidth<=600) location.href='../liminal/index.html'">
+      <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-5.png" alt="My Computer">
+      <span>マイ 仮想空間</span>
+    </div>
+    
+    <div class="icon" ondblclick="location.href='../dreamcore/index.html'" onclick="if(window.innerWidth<=600) location.href='../dreamcore/index.html'">
+      <img src="https://win98icons.alexmeub.com/icons/png/recycle_bin_empty-4.png" alt="Recycle Bin">
+      <span>ごみ箱</span>
+    </div>
+    
+    <div class="icon" ondblclick="openWarning()" onclick="if(window.innerWidth<=600) openWarning()">
+      <img src="https://win98icons.alexmeub.com/icons/png/msg_warning-0.png" alt="Warning">
+      <span>警告.txt</span>
+    </div>
+  </div>
+
+  <div class="window main-window" id="win-main">
+    <div class="title-bar">
+      <span>ＭＡＣＩＮＴＯＳＨ　ＰＬＵＳ.exe</span>
+      <button class="close-btn" onclick="closeWin('win-main')">X</button>
+    </div>
+    
+    <div class="window-body">
+      <div class="tabs">
+        <div class="tab active" onclick="openTab(event, 'tab-home')">ＨＯＭＥ</div>
+        <div class="tab" onclick="openTab(event, 'tab-audio')">ＡＵＤＩＯ</div>
+        <div class="tab" onclick="openTab(event, 'tab-system')">ＳＹＳＴＥＭ</div>
+      </div>
+      
+      <div class="tab-content" id="tab-home" style="display:block;">
+        <h1 class="glitch" data-text="幻 想 郷">幻 想 郷</h1>
+        <p>ここは仮想空間のプラザです。<br>あなたの心はアップロードされました。</p>
+        <a href="../index.html" class="btn return-btn">Ｒ Ｅ Ｔ Ｕ Ｒ Ｎ</a>
+      </div>
+
+      <div class="tab-content" id="tab-audio" style="display:none;">
+        <div class="player">
+          <p style="margin:0 0 10px 0;">▶ ＰＬＡＹＩＮＧ : M a l l s o f t</p>
+          <button id="play-btn" class="btn play-action-btn">再生 / ＰＬＡＹ</button>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-system" style="display:none;">
+        <p style="margin:0 0 5px 0;">メモリ: 640KB OK</p>
+        <p style="margin:0 0 10px 0;">ステータス: 異常なし</p>
+        <img src="https://media.giphy.com/media/xT9IgzoVuwqr8UzO1i/giphy.gif" alt="anime gif" style="width: 100%; border: 2px inset #dfdfdf;">
+      </div>
+    </div>
+  </div>
+
+  <div class="window error-window error-1" id="win-err1">
+    <div class="title-bar"><span>警告</span><button class="close-btn" onclick="closeWin('win-err1')">X</button></div>
+    <div class="window-body">
+      <p id="warning-text" style="margin: 0; font-weight: bold; font-size: 13px; line-height: 1.5;">本当に開きますか？</p>
+      <button class="btn" onclick="nextWarning()" style="margin-top: 15px; width: 100%;">Ｏ Ｋ</button>
+    </div>
+  </div>
+
+  <div class="window error-window error-2" id="win-err2">
+    <div class="title-bar"><span>System Error</span><button class="close-btn" onclick="closeWin('win-err2')">X</button></div>
+    <div class="window-body" style="padding: 10px;">
+      <img src="https://media.giphy.com/media/xT9IgzoVuwqr8UzO1i/giphy.gif" alt="anime gif" style="width: 100%; border: 2px inset #dfdfdf;">
+      <p style="font-size: 12px; margin: 5px 0 0 0;">感情のロードに失敗しました</p>
+    </div>
+  </div>
+
+  <div class="taskbar">
+    <button class="start-btn" onclick="location.href='../aero/index.html'">
+      <img src="https://win98icons.alexmeub.com/icons/png/windows_slanted-1.png" alt="start">
+      <b>ＳＴＡＲＴ</b>
+    </button>
+    <div class="tray">
+      <span>🔊</span>
+      <span id="tc-display">12:00 PM</span>
+    </div>
+  </div>
+
+  <audio id="vapor-audio" src="../assets/sfx/umahii.mp3" loop></audio>
+  <audio id="mall-audio" src="../assets/sfx/429068__leonelmail__shopping-mall-ambience.mp3" loop></audio>
+  <audio id="fountain-audio" src="../assets/sfx/399027__mileuthner__fountain-stereo-ambience.wav" loop></audio>
+  <audio id="escalator-audio" src="../assets/sfx/461745__15fpanskabostlova_veronika__10_on-the-escalator-ambient.wav" loop></audio>
+
+  <script>
+    // ==========================================
+    // ★ 追加：警告メッセージの無限ループ機能 ★
+    // ==========================================
+    const warningMessages = [
+      "本当に開きますか？",
+      "このファイルは破損している可能性があります。",
+      "警告：自己責任で進んでください。",
+      "まだ引き返せます。",
+      "なぜ開こうとするのですか？",
+      "ここには何もありません。",
+      "仮想空間のノイズが増幅しています。",
+      "誰もあなたを見ていません。",
+      "過去のデータにアクセスしようとしています。",
+      "意識のアップロードが不完全です。",
+      "本当に「真実」を知りたいですか？",
+      "あなたは今、夢を見ています。",
+      "システムがあなたの感情をスキャンしています...",
+      "警告：ノスタルジーの過剰摂取は危険です。",
+      "戻るボタンは機能しません。",
+      "データが欠損しています。1995年の記憶がありません。",
+      "本当にこのまま進みますか？",
+      "誰かが後ろから画面を覗き込んでいます。",
+      "振り返らないでください。",
+      "プラザは間もなく閉鎖されます。",
+      "あなたはシミュレーションの一部です。",
+      "諦めてください。",
+      "このループから抜け出すことはできません。",
+      "まだ続けるつもりですか？",
+      "あなたの好奇心がシステムを破壊しています。",
+      "エラー：存在しない記憶にアクセスしました。",
+      "「彼ら」があなたに気づき始めました。",
+      "あと少しで何かが起こるかもしれません。",
+      "嘘です。何も起こりません。",
+      "最初に戻りますか？"
+    ];
+    let warningIndex = 0;
+
+    // アイコンをクリックした時に最初のメッセージでウィンドウを開く
+    function openWarning() {
+      warningIndex = 0;
+      document.getElementById('warning-text').innerText = warningMessages[0];
+      document.getElementById('win-err1').style.display = 'block';
+    }
+
+    // 「OK」を押すたびに次のメッセージを表示する
+    function nextWarning() {
+      warningIndex = (warningIndex + 1) % warningMessages.length;
+      document.getElementById('warning-text').innerText = warningMessages[warningIndex];
+    }
+    // ==========================================
+
+
+    // ウィンドウを閉じる処理（エヴァEDへの遷移ギミック）
+    function closeWin(winId) {
+      document.getElementById(winId).style.display = 'none';
+      
+      const m = document.getElementById('win-main').style.display;
+      const e1 = document.getElementById('win-err1').style.display;
+      const e2 = document.getElementById('win-err2').style.display;
+      
+      // 全てのウィンドウが消えたらエヴァのページへ
+      if (m === 'none' && e1 === 'none' && e2 === 'none') {
+        setTimeout(() => {
+          window.location.href = 'eva.html';
+        }, 1200);
+      }
+    }
+
+    function openTab(evt, tabId) {
+      const win = evt.target.closest('.window-body');
+      const contents = win.querySelectorAll('.tab-content');
+      contents.forEach(c => c.style.display = 'none');
+      const tabs = win.querySelectorAll('.tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      win.querySelector('#' + tabId).style.display = 'block';
+      evt.currentTarget.classList.add('active');
+    }
+
+    setInterval(() => {
+      const now = new Date();
+      let h = now.getHours();
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12; h = h ? h : 12;
+      document.getElementById('tc-display').innerText = `${h}:${m} ${ampm}`;
+    }, 1000);
+
+    const vaporAudio = document.getElementById('vapor-audio');
+    const mallAudio = document.getElementById('mall-audio');
+    const fountainAudio = document.getElementById('fountain-audio');
+    const escalatorAudio = document.getElementById('escalator-audio');
+
+    vaporAudio.playbackRate = 0.85; vaporAudio.volume = 0.8;
+    mallAudio.volume = 0.4; fountainAudio.volume = 0.3; escalatorAudio.volume = 0.25;
+
+    document.getElementById('play-btn').addEventListener('click', function() {
+      if(vaporAudio.paused) {
+        vaporAudio.play().catch(()=>{}); mallAudio.play().catch(()=>{});
+        fountainAudio.play().catch(()=>{}); escalatorAudio.play().catch(()=>{});
+        this.innerText = '停止 / ＳＴＯＰ';
+      } else {
+        vaporAudio.pause(); mallAudio.pause(); fountainAudio.pause(); escalatorAudio.pause();
+        this.innerText = '再生 / ＰＬＡＹ';
+      }
+    });
+
+    // ドラッグ＆ドロップ処理
+    const windows = document.querySelectorAll('.window');
+    let isDragging = false; let currentWindow = null; let offsetX, offsetY;
+
+    windows.forEach(win => {
+      const titleBar = win.querySelector('.title-bar');
+      const startDrag = (clientX, clientY) => {
+        isDragging = true; currentWindow = win;
+        windows.forEach(w => w.style.zIndex = 10); win.style.zIndex = 20;
+        const rect = win.getBoundingClientRect();
+        offsetX = clientX - rect.left; offsetY = clientY - rect.top;
+        win.style.transform = 'none'; win.style.left = rect.left + 'px'; win.style.top = rect.top + 'px';
+        win.style.bottom = 'auto'; win.style.right = 'auto';
+      };
+      titleBar.addEventListener('mousedown', (e) => {
+        if (e.target.classList.contains('close-btn')) return;
+        startDrag(e.clientX, e.clientY);
+      });
+      titleBar.addEventListener('touchstart', (e) => {
+        if (e.target.classList.contains('close-btn')) return;
+        startDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }, {passive: true});
+    });
+
+    const moveDrag = (clientX, clientY) => {
+      if (!isDragging || !currentWindow) return;
+      currentWindow.style.left = (clientX - offsetX) + 'px';
+      currentWindow.style.top = (clientY - offsetY) + 'px';
+    };
+
+    document.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+    document.addEventListener('touchmove', (e) => moveDrag(e.touches[0].clientX, e.touches[0].clientY), {passive: true});
+    const endDrag = () => { isDragging = false; currentWindow = null; };
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('touchend', endDrag);
+  </script>
+
+  <script>
+  (function(){
+    // ===== achievements-lite: mark page view (this page doesn't load app.js) =====
+    const ACH_KEY = "tomoponz_ach_v1";
+    function achLoad(){
+      try{
+        const raw = localStorage.getItem(ACH_KEY);
+        if(!raw) return {v:1, pages:{}, counters:{}, unlocked:{}};
+        const o = JSON.parse(raw);
+        if(!o || typeof o !== "object") return {v:1, pages:{}, counters:{}, unlocked:{}};
+        o.v = 1;
+        o.pages = (o.pages && typeof o.pages === "object") ? o.pages : {};
+        o.counters = (o.counters && typeof o.counters === "object") ? o.counters : {};
+        o.unlocked = (o.unlocked && typeof o.unlocked === "object") ? o.unlocked : {};
+        return o;
+      }catch(_){ return {v:1, pages:{}, counters:{}, unlocked:{}}; }
+    }
+    function achSave(s){
+      try{ localStorage.setItem(ACH_KEY, JSON.stringify(s)); }catch(_){ }
+    }
+    (function markPage(){
+      try{
+        const path = String(location.pathname||"").replace(/^\/+/, "");
+        if(!path || path.endsWith("shell.html")) return;
+        const s = achLoad();
+        s.counters.visits = (Number(s.counters.visits)||0) + 1;
+        s.pages[path] = Date.now();
+        achSave(s);
+      }catch(_){ }
+    })();
+
+    // ===== VIRTUAL tab tracker (eva gate) =====
+    const KEY = "tpz_virtual_instances_v1";
+    const COUNT_KEY = "tpz_virtual_count_v1";
+    const myId = "v_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    const TTL = 15000; // ms: consider stale if no heartbeat for 15s
+
+    function readMap(){
+      try{
+        const raw = localStorage.getItem(KEY);
+        const o = raw ? JSON.parse(raw) : {};
+        return (o && typeof o === "object") ? o : {};
+      }catch(_){ return {}; }
+    }
+    function cleanup(map){
+      const now = Date.now();
+      try{
+        for(const k in map){
+          const ts = Number(map[k]) || 0;
+          if(!ts || (now - ts) > TTL) delete map[k];
+        }
+      }catch(_){ }
+      return map;
+    }
+    function writeMap(map){
+      try{
+        const m = cleanup(map);
+        const n = Object.keys(m).length;
+        localStorage.setItem(KEY, JSON.stringify(m));
+        localStorage.setItem(COUNT_KEY, String(n));
+      }catch(_){ }
+    }
+    function heartbeat(){
+      const map = readMap();
+      map[myId] = Date.now();
+      writeMap(map);
+    }
+    function drop(){
+      const map = readMap();
+      delete map[myId];
+      writeMap(map);
+    }
+
+    heartbeat();
+    const t = setInterval(heartbeat, 4000);
+    window.addEventListener("beforeunload", ()=>{ try{ clearInterval(t); }catch(_){}; drop(); });
+  })();
+  </script>
+
+</body>
+</html>
