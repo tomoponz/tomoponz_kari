@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>WAKE UP.</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="../assets/js/fps-player.js"></script>
+  <script defer src="../assets/js/security-lite.js?v=20260222"></script>
+  
+  <script>
+    // ==========================================
+    // ★ 壁の当たり判定
+    // ==========================================
+    AFRAME.registerComponent('grid-collider', {
+      init: function () {
+        this.lastLocalPos = new THREE.Vector3().copy(this.el.object3D.position);
+      },
+      tick: function () {
+        if (!window.isPlaying) return;
+        const CELL = 10;
+        const R = 1.2; // プレイヤー当たり半径（ゆるめ）
+        const worldPos = new THREE.Vector3();
+        this.el.object3D.getWorldPosition(worldPos);
+
+        // セル中心(0,10,20,...)の "境界" を基準にセル番号を決める
+        const toCell = (x, z) => ({
+          x: Math.floor((x + CELL/2) / CELL),
+          z: Math.floor((z + CELL/2) / CELL)
+        });
+
+        // 円(半径R)で4点チェックして壁にめり込みにくくする
+        const pts = [
+          toCell(worldPos.x + R, worldPos.z + R),
+          toCell(worldPos.x + R, worldPos.z - R),
+          toCell(worldPos.x - R, worldPos.z + R),
+          toCell(worldPos.x - R, worldPos.z - R),
+        ];
+
+        let hitWall = false;
+        for (const p of pts){
+          if (p.z < 0 || p.z >= mapData.length || p.x < 0 || p.x >= mapData[0].length) { hitWall = true; break; }
+          if (mapData[p.z][p.x] === 1) { hitWall = true; break; }
+        }
+        
+        if (hitWall) this.el.object3D.position.copy(this.lastLocalPos);
+        else this.lastLocalPos.copy(this.el.object3D.position);
+      }
+    });
+
+    // ==========================================
+    // ★ 追跡目玉：常にプレイヤー方向へ向ける（Yawのみ）
+    // ==========================================
+    AFRAME.registerComponent('look-at-player-y', {
+      schema: { target: { type: 'selector', default: '#main-cam' } },
+      init: function(){ this._vT = new THREE.Vector3(); this._vS = new THREE.Vector3(); },
+      tick: function(){
+        if (!window.isPlaying) return;
+        const t = this.data.target;
+        if (!t) return;
+        t.object3D.getWorldPosition(this._vT);
+        this.el.object3D.getWorldPosition(this._vS);
+        const dx = this._vT.x - this._vS.x;
+        const dz = this._vT.z - this._vS.z;
+        const yaw = Math.atan2(dx, dz);
+        this.el.object3D.rotation.set(0, yaw, 0);
+      }
+    });
+  
+
+// ★ 追跡目玉（本体）も常にプレイヤー方向へ向ける（Yawのみ）
+AFRAME.registerComponent('face-player-y', {
+  schema: { target: { type: 'selector', default: '#main-cam' } },
+  init: function(){ this._vT = new THREE.Vector3(); this._vS = new THREE.Vector3(); },
+  tick: function(){
+    if (!window.isPlaying) return;
+    const t = this.data.target;
+    if (!t) return;
+    t.object3D.getWorldPosition(this._vT);
+    this.el.object3D.getWorldPosition(this._vS);
+    const dx = this._vT.x - this._vS.x;
+    const dz = this._vT.z - this._vS.z;
+    const yaw = Math.atan2(dx, dz);
+    this.el.object3D.rotation.y = yaw;
+  }
+});
+
+
+
+// ★ 追跡スプライト：プレイヤーへ“完全に”正面を向ける（Yaw+Pitch、Rollなし）
+AFRAME.registerComponent('face-player', {
+  schema: { target: { type: 'selector', default: '#main-cam' } },
+  init: function(){ this._vT = new THREE.Vector3(); this._vS = new THREE.Vector3(); },
+  tick: function(){
+    if (!window.isPlaying) return;
+    const t = this.data.target;
+    if (!t) return;
+    t.object3D.getWorldPosition(this._vT);
+    this.el.object3D.getWorldPosition(this._vS);
+    // lookAt は up=(0,1,0) で回転を作るので、基本ロールは入らない
+    try{
+      this.el.object3D.lookAt(this._vT);
+      this.el.object3D.rotation.z = 0;
+    }catch(_){ }
+  }
+});
+</script>
+
+  <style>
+    #phase-3d { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; opacity: 0; pointer-events: none; z-index: -10; }
+    #phase-3d.active { opacity: 1; pointer-events: auto; z-index: 1000; }
+
+    /* 3D開始前はFPS UIを隠す（演出を壊さない） */
+    #phase-3d:not(.active) ~ #fps-ui { display: none; }
+  </style>
+</head>
+<body>
+
+  <div id="phase-2d">
+    <svg id="svg-filter" style="width:0; height:0; position:absolute;"><filter id="horror-warp"><feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" seed="1"><animate attributeName="baseFrequency" values="0.01;0.015;0.01" dur="5s" repeatCount="indefinite" /></feTurbulence><feDisplacementMap in="SourceGraphic" scale="40" /></filter></svg>
+    <div class="world-container"><div class="sky"></div><div class="ground"></div><div class="scenery-overlay"><img src="../img/cloud.png" class="dream-obj cloud-1"><img src="../img/cloud.png" class="dream-obj cloud-2"><img src="../img/rainbow.png" class="dream-obj rainbow-mirror"><img src="../img/dolphin.png" class="dream-obj leaps"></div></div>
+    <div class="vignette"></div><div class="grain"></div><div class="vhs-lines"></div>
+    <div class="main-title">Wake up.</div><div id="button-hell"></div>
+    <button class="the-exit" id="real-exit">I want to wake up.</button>
+    <div class="eye-watcher" style="top:10%; left:20%;"><div class="eye"><div class="pupil"></div></div></div>
+    <img src="../img/beach.png" class="loose-pic" style="bottom:20%; left:5%; width:150px; rotate:-10deg;">
+    <img src="../img/CD.png" class="loose-pic" style="top:30%; right:15%; width:80px; opacity:0.6;">
+  </div>
+
+  <div id="phase-3d">
+    <div class="hud-timer" id="timer-display">SURVIVE: 60s</div>
+    <div class="hud-vignette" id="hud-vignette"></div>
+
+    <a-scene embedded fog="type: exponential; color: #000; density: 0.01;">
+      <a-assets>
+  <img id="tex-eye" src="../img/eye.png?v=20260222" crossorigin="anonymous">
+</a-assets>
+      
+      <a-entity id="main-cam" camera position="10 1.6 70" fps-player grid-collider>
+        <a-cursor color="#fff" scale="0.5 0.5 0.5"></a-cursor>
+        <a-light type="point" color="#fff" intensity="1.2" distance="60" position="0 0 0"></a-light>
+      </a-entity>
+
+            <a-entity id="monster" position="130 1.6 10">
+        <!-- 画像が“追ってくる”版：球体は廃止し、スプライト(平面)だけにする -->
+        <a-plane id="monster-sprite"
+                 width="5.2" height="5.2"
+                 position="0 0 0"
+                 face-player
+                 material="src:#tex-eye; transparent:true; alphaTest:0.05; side:double; shader:flat;"></a-plane>
+        <a-light type="point" color="#ffffff" intensity="1.4" distance="35" position="0 0 0"></a-light>
+        <a-light type="point" color="red" intensity="2.2" distance="25" position="0 0 0"></a-light>
+      </a-entity>
+
+      <a-entity id="map-root"></a-entity>
+      <a-light type="ambient" color="#ffffff" intensity="0.6"></a-light>
+    </a-scene>
+  </div>
+  
+  <audio id="sfx-kodou" src="../assets/sfx/kodou.wav" loop preload="auto"></audio>
+  <audio id="sfx-hashiri" src="../assets/sfx/3_hashiri.wav" loop preload="auto"></audio>
+  <audio id="sfx-gya" src="../assets/sfx/gyaaaa_d.wav" preload="auto"></audio>
+  <audio id="sfx-nigeru" src="../assets/sfx/nc63924_nigerunndayoxo.wav" preload="auto"></audio>
+
+  <div class="overlay-screen" id="game-over"><h1 style="color: red;">CAUGHT.</h1></div>
+  <div class="overlay-screen" id="game-clear" style="background: #fff; color: #000;"><h1>AWAKE.</h1></div>
+
+  <script>
+    window.isPlaying = false; 
+    let timeLeft = 60;
+    // audio refs (need to be visible from gameOver)
+    let sKodou = null, sHashiri = null, sGya = null, sNigeru = null;
+    let _nigeruOnce = false;
+    function playNigeruOnce(){
+      if(_nigeruOnce) return;
+      _nigeruOnce = true;
+      try{
+        sNigeru = sNigeru || document.getElementById('sfx-nigeru');
+        if(!sNigeru) return;
+        sNigeru.currentTime = 0;
+        sNigeru.volume = 1;
+        if(window.__boostAudio) { try{ window.__boostAudio(sNigeru, 2.8); }catch(e){} }
+        sNigeru.play().catch(()=>{});
+      }catch(e){}
+    }
+
+    // このページのデフォルト（プレイヤーが敵より少し速い）
+    window.__fpsSettings__ = window.__fpsSettings__ || { moveSpeed: 0.22, lookSpeed: 0.05, volume: 1.0 };
+
+    // ボタンギミック
+    const exitBtn = document.getElementById('real-exit');
+    const hell = document.getElementById('button-hell');
+    exitBtn.addEventListener('mouseenter', function() {
+      if (Math.random() < 0.98) {
+        playNigeruOnce();
+        const dummy = document.createElement('button'); dummy.className = 'the-exit dummy'; dummy.innerText = "I want to wake up."; dummy.style.left = this.style.left || '50%'; dummy.style.top = this.style.top || '80%'; hell.appendChild(dummy);
+        this.style.left = (Math.random() * (window.innerWidth - 200)) + 'px'; this.style.top = (Math.random() * (window.innerHeight - 100)) + 'px'; this.style.position = 'fixed'; this.style.transform = 'none';
+      }
+    });
+
+    // モバイルでも同じ「逃げる」挙動にする（タップでもほぼ逃げる）
+    exitBtn.addEventListener('touchstart', function(e) {
+      if (Math.random() < 0.98) {
+        playNigeruOnce();
+        e.preventDefault();
+        const dummy = document.createElement('button');
+        dummy.className = 'the-exit dummy';
+        dummy.innerText = "I want to wake up.";
+        dummy.style.left = this.style.left || '50%';
+        dummy.style.top = this.style.top || '80%';
+        hell.appendChild(dummy);
+        this.style.left = (Math.random() * (window.innerWidth - 200)) + 'px';
+        this.style.top = (Math.random() * (window.innerHeight - 100)) + 'px';
+        this.style.position = 'fixed';
+        this.style.transform = 'none';
+      }
+    }, {passive:false});
+
+    const mapData = [
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1],
+      [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+      [1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1],
+      [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+      [1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+      [1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1],
+      [1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ];
+    
+    const UNIT = 10; 
+    const mapWidth = mapData[0].length * UNIT;
+    const mapDepth = mapData.length * UNIT;
+
+    // マップ生成
+    function generateMap() {
+      const root = document.getElementById('map-root');
+
+      const floor = document.createElement('a-plane');
+      floor.setAttribute('position', `${(mapWidth/2) - (UNIT/2)} 0 ${(mapDepth/2) - (UNIT/2)}`);
+      floor.setAttribute('rotation', '-90 0 0');
+      floor.setAttribute('width', mapWidth);
+      floor.setAttribute('height', mapDepth);
+      floor.setAttribute('color', '#4a504a'); 
+      root.appendChild(floor);
+
+      const ceil = document.createElement('a-plane');
+      ceil.setAttribute('position', `${(mapWidth/2) - (UNIT/2)} 6 ${(mapDepth/2) - (UNIT/2)}`);
+      ceil.setAttribute('rotation', '90 0 0');
+      ceil.setAttribute('width', mapWidth); 
+      ceil.setAttribute('height', mapDepth);
+      ceil.setAttribute('color', '#1a1a1a'); 
+      root.appendChild(ceil);
+
+      mapData.forEach((row, z) => {
+        row.forEach((cell, x) => {
+          if (cell === 1) {
+            const posX = x * UNIT; 
+            const posZ = z * UNIT;
+            const wall = document.createElement('a-box');
+            wall.setAttribute('position', `${posX} 3 ${posZ}`);
+            wall.setAttribute('width', UNIT);
+            wall.setAttribute('height', 6);
+            wall.setAttribute('depth', UNIT);
+            wall.setAttribute('color', '#888888'); 
+            root.appendChild(wall);
+          }
+        });
+      });
+    }
+
+    generateMap(); 
+
+    // ==========================================
+    // ★ 怪物の経路探索 (幅優先探索: BFS)
+    // ==========================================
+    function findPath(startX, startZ, goalX, goalZ) {
+      let queue = [{x: startX, z: startZ, path: []}];
+      let visited = Array(mapData.length).fill(0).map(() => Array(mapData[0].length).fill(false));
+      
+      if(startZ < 0 || startZ >= mapData.length || startX < 0 || startX >= mapData[0].length) return [];
+      visited[startZ][startX] = true;
+
+      const dirs = [[0, -1], [0, 1], [-1, 0], [1, 0]]; 
+
+      while(queue.length > 0) {
+        let curr = queue.shift();
+        if(curr.x === goalX && curr.z === goalZ) { return curr.path; }
+
+        for(let d of dirs) {
+          let nx = curr.x + d[0]; let nz = curr.z + d[1];
+          if(nz >= 0 && nz < mapData.length && nx >= 0 && nx < mapData[0].length) {
+            if(mapData[nz][nx] === 0 && !visited[nz][nx]) { 
+              visited[nz][nx] = true;
+              queue.push({x: nx, z: nz, path: curr.path.concat([{x: nx, z: nz}])});
+            }
+          }
+        }
+      }
+      return []; 
+    }
+
+    // ゲームスタート処理
+    exitBtn.addEventListener('click', () => {
+      document.getElementById('svg-filter').remove(); 
+      document.getElementById('phase-2d').style.opacity = '0';
+      setTimeout(() => { document.getElementById('phase-2d').style.display = 'none'; }, 500);
+      
+      document.getElementById('phase-3d').classList.add('active');
+      window.dispatchEvent(new Event('resize'));
+      
+      startSurvival(); // 敵とタイマー起動
+    });
+
+    function startSurvival() {
+      window.isPlaying = true;
+      const playerCam = document.getElementById('main-cam');
+      const monster = document.getElementById('monster');
+      const timerDisp = document.getElementById('timer-display');
+      const hudVignette = document.getElementById('hud-vignette');
+
+// 逃走サウンド（心拍/息）と捕獲ボイス
+sKodou = document.getElementById('sfx-kodou');
+sHashiri = document.getElementById('sfx-hashiri');
+sGya = document.getElementById('sfx-gya');
+
+// Quiet files → boost (WebAudio Gain) if available
+[sKodou, sHashiri, sGya].forEach(a => {
+  if(!a) return;
+  a.volume = 0;
+  a.dataset.basevol = '1';
+  if(window.__boostAudio) { try{ window.__boostAudio(a, 2.8); }catch(e){} }
+});
+
+// Start loops at 0 volume (user gesture: exitBtn click → startSurvival)
+try{ if(sKodou) sKodou.play().catch(()=>{}); }catch(e){}
+try{ if(sHashiri) sHashiri.play().catch(()=>{}); }catch(e){}
+
+function updateChaseAudio(dist){
+  const master = (window.__fpsSettings && typeof window.__fpsSettings__.volume === 'number') ? window.__fpsSettings__.volume : 1;
+  const k = Math.max(0, Math.min(1, (28 - dist) / 18)); // 0..1
+  if (sKodou)   sKodou.volume   = Math.min(1, (0.04 + 0.86 * k) * master);
+  if (sHashiri) sHashiri.volume = Math.min(1, (0.03 + 0.82 * k) * master);
+}
+
+      
+      let currentPath = [];
+      let pathUpdateTimer = 0; 
+
+      const timerInterval = setInterval(() => {
+        if(!window.isPlaying) return clearInterval(timerInterval);
+        timeLeft--;
+        timerDisp.innerText = `SURVIVE: ${timeLeft}s`;
+        if(timeLeft <= 0) gameClear();
+      }, 1000);
+
+      function update() {
+        if(!window.isPlaying) return;
+        
+        const pPos = new THREE.Vector3();
+        playerCam.object3D.getWorldPosition(pPos);
+        const mPos = monster.object3D.position;
+        // 捕獲判定（角待ちで抜けないように少し堅めに）
+        const dx = pPos.x - mPos.x;
+        const dz = pPos.z - mPos.z;
+        const dist = Math.sqrt(dx*dx + dz*dz);
+
+        updateChaseAudio(dist);
+
+        const toCell = (x, z) => ({
+          x: Math.floor((x + UNIT/2) / UNIT),
+          z: Math.floor((z + UNIT/2) / UNIT)
+        });
+        const pc = toCell(pPos.x, pPos.z);
+        const mc = toCell(mPos.x, mPos.z);
+        const manhattan = Math.abs(pc.x - mc.x) + Math.abs(pc.z - mc.z);
+
+        // 距離 or 同/隣セルなら捕獲（隅の当たり抜け対策）
+        if (dist < 3.2 || (manhattan <= 1 && dist < 5.6)) { gameOver(); return; }
+        
+        // 怪物が近づくと画面が赤くなる
+        if (dist < 30) { 
+          const danger = 1 - (dist / 30); 
+          hudVignette.style.background = `radial-gradient(circle, transparent ${50 - danger*50}%, rgba(255,0,0,${danger}) 100%)`; 
+        } else { 
+          hudVignette.style.background = `radial-gradient(circle, transparent 50%, rgba(0,0,0,0.8) 100%)`; 
+        }
+        
+        // 怪物のスピード（上限つき：プレイヤーが少しだけ速い）
+        const speed = Math.min(0.205, 0.185 + (60 - timeLeft) * 0.0012);
+
+        // 経路の定期更新
+        pathUpdateTimer--;
+        if (pathUpdateTimer <= 0) {
+          // セル番号の決め方を統一（隅で壁セルを goal にしない）
+          const clampCell = (gx, gz) => ({
+            x: Math.max(0, Math.min(mapData[0].length - 1, gx)),
+            z: Math.max(0, Math.min(mapData.length - 1, gz))
+          });
+
+          const nearestOpen = (gx, gz) => {
+            let c = clampCell(gx, gz);
+            if (mapData[c.z][c.x] === 0) return c;
+            // 周辺リング探索（最大5）
+            for (let r = 1; r <= 5; r++) {
+              for (let dx = -r; dx <= r; dx++) {
+                for (let dz = -r; dz <= r; dz++) {
+                  if (Math.abs(dx) + Math.abs(dz) !== r) continue;
+                  const nx = c.x + dx;
+                  const nz = c.z + dz;
+                  if (nz < 0 || nz >= mapData.length || nx < 0 || nx >= mapData[0].length) continue;
+                  if (mapData[nz][nx] === 0) return {x: nx, z: nz};
+                }
+              }
+            }
+            // 最後の保険：全探索で最初の通路
+            for (let z = 0; z < mapData.length; z++) {
+              for (let x = 0; x < mapData[0].length; x++) {
+                if (mapData[z][x] === 0) return {x, z};
+              }
+            }
+            return c;
+          };
+
+          const mg = clampCell(Math.floor((mPos.x + UNIT/2)/UNIT), Math.floor((mPos.z + UNIT/2)/UNIT));
+          const pg = nearestOpen(Math.floor((pPos.x + UNIT/2)/UNIT), Math.floor((pPos.z + UNIT/2)/UNIT));
+
+          currentPath = findPath(mg.x, mg.z, pg.x, pg.z);
+          pathUpdateTimer = 18;
+        }
+
+        // 怪物の移動実行
+        if (currentPath.length > 0) {
+          let targetNode = currentPath[0];
+          let targetX = targetNode.x * UNIT;
+          let targetZ = targetNode.z * UNIT;
+
+          let tdx = targetX - mPos.x;
+          let tdz = targetZ - mPos.z;
+          let tDist = Math.sqrt(tdx*tdx + tdz*tdz);
+
+          if (tDist < speed) {
+            mPos.x = targetX;
+            mPos.z = targetZ;
+            currentPath.shift();
+          } else {
+            mPos.x += (tdx/tDist) * speed;
+            mPos.z += (tdz/tDist) * speed;
+          }
+        }
+        
+        requestAnimationFrame(update);
+      }
+      update();
+    }
+
+    // ★ ここが修正されたポイントです ★
+    function gameOver() {
+      try{ if(sKodou){ sKodou.pause(); sKodou.currentTime = 0; } }catch(e){}
+      try{ if(sHashiri){ sHashiri.pause(); sHashiri.currentTime = 0; } }catch(e){}
+      try{ if(sGya){ sGya.currentTime = 0; sGya.volume = Math.min(1, (window.__fpsSettings?.volume ?? 1) * 1.0); if(window.__boostAudio){ try{ window.__boostAudio(sGya, 3.0); }catch(e){} } sGya.play().catch(()=>{}); } }catch(e){}
+ 
+      window.isPlaying = false; 
+      document.getElementById('game-over').style.opacity = 1; 
+      setTimeout(() => location.href = '../liminal/index.html', 3000); 
+    }
+    
+    function gameClear() { 
+      window.isPlaying = false; 
+      document.getElementById('game-clear').style.opacity = 1; 
+      // dreamcoreフォルダから見て、同じフォルダ内のspecial/index.htmlへ飛ぶように修正
+      setTimeout(() => location.href = 'special/index.html', 3000); 
+    }
+    
+    // 2D画面の目玉ギミック
+    document.addEventListener('mousemove', (e) => { 
+      document.querySelectorAll('.eye').forEach(eye => { 
+        const rect = eye.getBoundingClientRect(); const x = rect.left + rect.width / 2; const y = rect.top + rect.height / 2; 
+        const rot = (Math.atan2(e.clientX - x, e.clientY - y) * (180 / Math.PI) * -1) + 180; eye.style.transform = `rotate(${rot}deg)`; 
+      }); 
+    });
+  </script>
+</body>
+</html>
