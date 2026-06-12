@@ -1,0 +1,1664 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'self' https://api.counterapi.dev; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>R-122｜ParnHub</title>
+  <meta name="description" content="R-122 バイオ動画アーカイブ" />
+
+  <link rel="stylesheet" href="style.css?v=20260612">
+  <script defer src="assets/js/site-search.js?v=20260612"></script>
+  <script defer src="app.js?v=20260612"></script>
+
+  <style>
+    :root{
+      --r122-bg:#000;
+      --r122-panel:#0d0d0d;
+      --r122-panel2:#151515;
+      --r122-line:#242424;
+      --r122-line2:#333;
+      --r122-text:#f3f3f3;
+      --r122-muted:#b9b9b9;
+      --r122-muted2:#858585;
+      --r122-orange:#f90;
+      --r122-orange2:#ffb24a;
+      --r122-shadow:0 18px 60px rgba(0,0,0,.72);
+    }
+
+    html,body{height:100%;}
+    body{
+      margin:0;
+      background:var(--r122-bg);
+      color:var(--r122-text);
+      font-family:Arial, Helvetica, "Noto Sans JP", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    body::before,body::after{display:none !important;}
+    a{color:var(--r122-orange2); text-decoration:none;}
+    button,input{font:inherit;}
+
+    /* ===== Gate ===== */
+    .gateWrap{
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:24px 14px;
+      background:#000;
+    }
+    .gatePanel{
+      width:min(920px,100%);
+      background:#090909;
+      border:1px solid #2a2a2a;
+      box-shadow:var(--r122-shadow);
+      border-radius:2px;
+      padding:28px 26px 22px;
+    }
+    .gateInner{
+      border:1px solid #1f1f1f;
+      padding:26px 24px 22px;
+      background:linear-gradient(180deg,rgba(0,0,0,.56),rgba(0,0,0,.34));
+    }
+    .langRow{display:flex; justify-content:flex-start; margin-bottom:28px;}
+    .langBtn{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid #2b2b2b;
+      background:#111;
+      color:#e6e6e6;
+      padding:6px 10px;
+      border-radius:2px;
+      font-size:14px;
+    }
+    .langBtn .car{opacity:.85; font-size:12px;}
+    .phLogo{
+      display:flex;
+      justify-content:center;
+      margin:0 0 18px;
+      font-weight:900;
+      font-size:clamp(38px,7vw,54px);
+      line-height:1;
+      letter-spacing:-1.2px;
+      user-select:none;
+    }
+    .phLogo .porn{color:#fff;}
+    .phLogo .hub{
+      margin-left:3px;
+      padding:3px 9px 4px;
+      background:var(--r122-orange);
+      color:#000;
+      border-radius:5px;
+      line-height:1;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:.88em;
+    }
+    .gateH1{
+      text-align:center;
+      font-size:clamp(27px,3.2vw,44px);
+      font-weight:900;
+      margin:0 0 18px;
+      letter-spacing:-.6px;
+    }
+    .noticeBtn{display:flex; justify-content:center; margin:0 0 16px;}
+    .noticeBtn span{
+      border:2px solid var(--r122-orange);
+      color:#ececec;
+      padding:8px 18px;
+      font-weight:800;
+      border-radius:3px;
+      letter-spacing:.2px;
+      background:rgba(0,0,0,.25);
+      font-size:14px;
+    }
+    .gateP{
+      max-width:720px;
+      margin:0 auto;
+      color:#d1d1d1;
+      line-height:1.75;
+      font-size:14px;
+      text-align:left;
+    }
+    .law{
+      text-align:center;
+      color:var(--r122-orange);
+      font-weight:900;
+      margin:16px 0 14px;
+      font-size:18px;
+      letter-spacing:.1px;
+    }
+    .gateBtns{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      margin:18px auto 14px;
+      max-width:720px;
+    }
+    .gateBtn{
+      padding:18px 16px;
+      font-size:18px;
+      font-weight:900;
+      border-radius:3px;
+      border:2px solid var(--r122-orange);
+      background:rgba(0,0,0,.58);
+      color:#fff;
+      cursor:pointer;
+      text-align:center;
+      min-height:58px;
+    }
+    .gateBtn:hover{filter:brightness(1.08); background:rgba(255,153,0,.08);}
+    .gateBtn:active{transform:translateY(1px);}
+    .footLinks{
+      max-width:720px;
+      margin:6px auto 0;
+      color:#aaa;
+      font-size:13px;
+      line-height:1.65;
+      text-align:center;
+    }
+    .footLinks a{color:var(--r122-orange); font-weight:900;}
+    .footLinks a:hover{text-decoration:underline;}
+    .fadeOut{animation:fadeOut .28s ease forwards;}
+    @keyframes fadeOut{to{opacity:0; transform:translateY(10px) scale(.99);}}
+
+    /* ===== Site ===== */
+    .siteStage{display:none; min-height:100vh; background:#000;}
+    .siteStage.show{display:block;}
+    .topbar{
+      min-height:64px;
+      background:#111;
+      border-bottom:1px solid #222;
+      padding:10px 18px;
+      display:flex;
+      align-items:center;
+      gap:14px;
+      position:sticky;
+      top:0;
+      z-index:20;
+    }
+    .hamb{width:28px; height:20px; display:grid; gap:4px; flex:0 0 auto;}
+    .hamb span{background:#fff; height:2px; opacity:.92; border-radius:2px;}
+    .topLogo{
+      display:flex;
+      align-items:center;
+      font-weight:900;
+      font-size:34px;
+      user-select:none;
+      line-height:1;
+      letter-spacing:-1px;
+      flex:0 0 auto;
+    }
+    .topLogo .hub{
+      margin-left:2px;
+      padding:2px 8px 3px;
+      background:var(--r122-orange);
+      color:#000;
+      border-radius:4px;
+      line-height:1;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:.88em;
+    }
+    .search{
+      flex:1 1 420px;
+      min-width:180px;
+      display:flex;
+      align-items:center;
+      max-width:640px;
+      background:#1b1b1b;
+      border:1px solid #2d2d2d;
+      border-radius:999px;
+      padding:8px 12px;
+      gap:10px;
+      margin-left:6px;
+    }
+    .search .icon{opacity:.8; flex:0 0 auto;}
+    .search .clearSearch{cursor:pointer; color:#aaa; border:0; background:transparent; padding:0; display:grid; place-items:center;}
+    .search .clearSearch:hover{color:#fff;}
+    .search input{
+      flex:1;
+      min-width:0;
+      background:transparent;
+      border:0;
+      outline:0;
+      color:#fff;
+      font-size:15px;
+    }
+    .pill{
+      border-radius:999px;
+      padding:9px 14px;
+      background:var(--r122-orange);
+      color:#000;
+      font-weight:900;
+      font-size:14px;
+      border:0;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .pill:hover{filter:brightness(1.07);}
+    .topIcons{display:flex; gap:10px; align-items:center; opacity:.94; flex:0 0 auto;}
+    .circ{
+      width:36px; height:36px;
+      border-radius:999px;
+      background:#2a2a2a;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      font-weight:900;
+      font-size:14px;
+    }
+    .subnav{
+      background:#0d0d0d;
+      border-bottom:1px solid #1a1a1a;
+      padding:10px 18px;
+      display:flex;
+      gap:26px;
+      color:#e6e6e6;
+      font-size:14px;
+      align-items:center;
+      overflow-x:auto;
+      scrollbar-width:none;
+    }
+    .subnav::-webkit-scrollbar{display:none;}
+    .subnav a{color:#e6e6e6; text-decoration:none; opacity:.92; white-space:nowrap;}
+    .subnav a:hover{opacity:1; color:#fff;}
+    .subnav .dd::after{content:" ▼"; font-size:11px; opacity:.75;}
+    .content{padding:22px 18px 46px; max-width:1280px; margin:0 auto;}
+    .pageHead{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin:0 0 12px;}
+    .pageTitle{font-size:24px; font-weight:900; margin:0; letter-spacing:.2px;}
+    .resultMeta{color:#aaa; font-size:13px; white-space:nowrap;}
+    .chips{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px;}
+    .chip{
+      padding:9px 14px;
+      border-radius:999px;
+      background:#1b1b1b;
+      border:1px solid #2a2a2a;
+      color:#e8e8e8;
+      font-weight:800;
+      font-size:14px;
+      opacity:.96;
+      cursor:pointer;
+      min-height:40px;
+    }
+    .chip:hover{background:#242424;}
+    .chip.active{
+      color:#000;
+      border-color:var(--r122-orange);
+      background:var(--r122-orange);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0,1fr));
+      gap:17px 16px;
+    }
+    .card{
+      background:#101010;
+      border:1px solid #222;
+      border-radius:6px;
+      overflow:hidden;
+      box-shadow:0 10px 40px rgba(0,0,0,.55);
+      cursor:pointer;
+      transition:transform .16s ease, border-color .16s ease, filter .16s ease;
+    }
+    .card:hover{transform:translateY(-2px); border-color:#383838; filter:brightness(1.04);}
+    .card:focus-visible{outline:2px solid var(--r122-orange); outline-offset:3px;}
+    .thumb{position:relative; aspect-ratio:16/9; background:#050505; overflow:hidden;}
+    .thumb img{width:100%; height:100%; object-fit:cover; display:block; filter:contrast(1.06) saturate(1.08);}
+    .dur{
+      position:absolute;
+      left:8px;
+      bottom:8px;
+      background:rgba(0,0,0,.82);
+      color:#fff;
+      font-weight:900;
+      font-size:12px;
+      padding:4px 7px;
+      border-radius:4px;
+    }
+    .quality{
+      position:absolute;
+      right:8px;
+      top:8px;
+      background:rgba(255,153,0,.92);
+      color:#000;
+      font-weight:900;
+      font-size:11px;
+      padding:3px 6px;
+      border-radius:4px;
+    }
+    .meta{padding:10px 10px 12px;}
+    .title{margin:0 0 6px; font-weight:900; font-size:14px; line-height:1.35; color:#fff;}
+    .sub{margin:0 0 8px; color:#bdbdbd; font-size:12px; line-height:1.35;}
+    .cardStats{display:flex; align-items:center; justify-content:space-between; gap:8px; color:#858585; font-size:12px;}
+    .uploader{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+    .rating{color:#ccc; flex:0 0 auto;}
+    .empty{
+      display:none;
+      border:1px dashed #333;
+      background:#0b0b0b;
+      border-radius:8px;
+      padding:26px 18px;
+      color:#c9c9c9;
+      text-align:center;
+      line-height:1.7;
+    }
+    .empty.show{display:block;}
+
+    /* ===== Modal ===== */
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.82);
+      z-index:9999;
+      display:none;
+      justify-content:center;
+      align-items:flex-start;
+      padding:22px 14px;
+      overflow-y:auto;
+      -webkit-overflow-scrolling:touch;
+    }
+    .modal.show{display:flex;}
+    .modalBox{
+      width:min(980px,100%);
+      background:#0f0f0f;
+      border:1px solid #262626;
+      border-radius:8px;
+      box-shadow:var(--r122-shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      max-height:calc(100vh - 44px);
+    }
+    @supports (height:100dvh){.modalBox{max-height:calc(100dvh - 44px);}}
+    .modalTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 12px;
+      border-bottom:1px solid #202020;
+      background:#131313;
+      color:#eaeaea;
+      font-weight:900;
+    }
+    .xbtn{
+      width:36px; height:36px;
+      border-radius:8px;
+      border:1px solid #2a2a2a;
+      background:#111;
+      color:#fff;
+      cursor:pointer;
+      font-weight:900;
+      flex:0 0 auto;
+    }
+    .modalBody{padding:14px; overflow:auto; flex:1; min-height:0;}
+    .playerFrame{background:#000; border:1px solid #222; border-radius:8px; overflow:hidden; position:relative;}
+    .playerFrame img{width:100%; max-height:58vh; object-fit:contain; display:block; background:#000;}
+    .playOverlay{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      pointer-events:none;
+      background:radial-gradient(circle at center, rgba(0,0,0,.08), rgba(0,0,0,.0) 42%);
+    }
+    .playTriangle{
+      width:74px;
+      height:74px;
+      border-radius:999px;
+      background:rgba(0,0,0,.64);
+      border:2px solid rgba(255,255,255,.22);
+      display:grid;
+      place-items:center;
+      color:var(--r122-orange);
+      font-size:34px;
+      padding-left:4px;
+    }
+    .detailTitle{font-size:20px; font-weight:900; margin:14px 0 8px; line-height:1.35;}
+    .detailStats{display:flex; flex-wrap:wrap; gap:10px; align-items:center; color:#aaa; font-size:13px; margin-bottom:10px;}
+    .rateBar{height:8px; width:120px; border-radius:999px; background:#2b2b2b; overflow:hidden; display:inline-block; vertical-align:middle;}
+    .rateBar > i{display:block; height:100%; background:var(--r122-orange); width:80%;}
+    .modalText{color:#ddd; line-height:1.75; font-size:14px; margin:10px 0 0;}
+    .tagRow{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+    .tagPill{padding:6px 9px; border-radius:999px; background:#1b1b1b; color:#ddd; border:1px solid #2b2b2b; font-size:12px;}
+    .punch{
+      margin-top:13px;
+      padding:12px 12px;
+      border-radius:8px;
+      border:1px dashed rgba(255,153,0,.48);
+      background:rgba(255,153,0,.065);
+      color:#fff;
+      font-weight:900;
+      line-height:1.75;
+    }
+    .analysisBox{display:none; margin-top:12px; border:1px solid #333; border-radius:8px; background:#090909; overflow:hidden;}
+    .analysisBox.show{display:block;}
+    .analysisHead{display:flex; justify-content:space-between; gap:12px; padding:10px 12px; background:#141414; border-bottom:1px solid #252525; font-weight:900;}
+    .analysisBody{padding:12px; color:#ddd; font-size:14px; line-height:1.75;}
+    .meter{height:10px; background:#222; border-radius:999px; overflow:hidden; margin:8px 0 10px;}
+    .meter > i{display:block; height:100%; width:0%; background:linear-gradient(90deg,#f90,#ffd16c); transition:width .45s ease;}
+
+    /* ===== Play parody (削除/検閲 演出) ===== */
+    .playOverlay.live{pointer-events:auto; cursor:pointer;}
+    .playOverlay.live .playTriangle{transition:transform .15s ease, background .15s ease;}
+    .playOverlay.live:hover .playTriangle{transform:scale(1.06); background:rgba(0,0,0,.78);}
+    .playStatus{
+      position:absolute; inset:0;
+      display:none;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      background:rgba(0,0,0,.86);
+      color:#fff;
+      text-align:center;
+      padding:18px;
+    }
+    .playStatus.show{display:flex;}
+    .playStatus .psMain{font-size:clamp(20px,3vw,30px); font-weight:900; letter-spacing:1px;}
+    .playStatus .psSub{font-size:13px; color:#bdbdbd; max-width:42ch; line-height:1.7;}
+    .playStatus .psCode{font-family:Consolas,monospace; color:var(--r122-orange); font-size:12px; letter-spacing:.5px;}
+    .psBar{width:min(320px,80%); height:8px; border-radius:999px; background:#2b2b2b; overflow:hidden;}
+    .psBar > i{display:block; height:100%; width:0%; background:linear-gradient(90deg,#f90,#ffd16c); transition:width .25s linear;}
+    .psRetry{
+      margin-top:6px; padding:8px 16px; border-radius:4px;
+      border:2px solid var(--r122-orange); background:rgba(0,0,0,.4);
+      color:#fff; font-weight:800; cursor:pointer;
+    }
+    .psRetry:hover{background:rgba(255,153,0,.1);}
+
+    /* ===== Toast ===== */
+    .r122Toast{
+      position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(20px);
+      background:#111; border:1px solid #333; color:#fff;
+      padding:11px 18px; border-radius:6px; font-size:14px; font-weight:700;
+      box-shadow:0 14px 40px rgba(0,0,0,.6);
+      opacity:0; pointer-events:none; transition:opacity .22s ease, transform .22s ease;
+      z-index:99999; max-width:88vw; text-align:center;
+    }
+    .r122Toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+    /* ===== Hamburger dropdown ===== */
+    .hamb{cursor:pointer; border:0; background:transparent; padding:0;}
+    .hambMenu{
+      position:absolute; left:14px; top:60px;
+      background:#121212; border:1px solid #2a2a2a; border-radius:8px;
+      box-shadow:0 18px 50px rgba(0,0,0,.6);
+      padding:6px; display:none; z-index:30; min-width:180px;
+    }
+    .hambMenu.show{display:block;}
+    .hambMenu button{
+      display:block; width:100%; text-align:left;
+      background:transparent; border:0; color:#e8e8e8;
+      padding:9px 12px; border-radius:5px; font-size:14px; cursor:pointer;
+    }
+    .hambMenu button:hover{background:#222; color:#fff;}
+    .topIcons .circ{cursor:pointer; border:0; transition:background .15s ease, transform .12s ease;}
+    .topIcons .circ:hover{background:#3a3a3a;}
+    .topIcons .circ:active{transform:scale(.92);}
+    .langBtn{cursor:pointer;}
+
+    /* ===== Account panel ===== */
+    .acctBody{padding:4px 2px;}
+    .acctName{font-size:18px; font-weight:900; margin:0 0 4px;}
+    .acctSub{color:#aaa; font-size:13px; margin:0 0 14px; line-height:1.7;}
+    .histTitle{font-weight:900; font-size:14px; margin:0 0 8px; color:#ddd;}
+    .histList{list-style:none; margin:0; padding:0; display:grid; gap:8px;}
+    .histList li{
+      display:flex; justify-content:space-between; gap:10px; align-items:center;
+      background:#141414; border:1px solid #262626; border-radius:6px;
+      padding:9px 11px; cursor:pointer;
+    }
+    .histList li:hover{border-color:#3a3a3a; background:#191919;}
+    .histList .ht{font-size:13px; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+    .histList .hd{font-size:11px; color:#888; flex:0 0 auto;}
+    .histEmpty{color:#9a9a9a; line-height:1.8; font-size:14px;}
+    .acctActions{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;}
+
+    /* ===== Feature row: LIVE / AD / DAILY ===== */
+    .featRow{display:grid; gap:14px; margin:0 0 18px;}
+    /* LIVE 培養中継 */
+    .liveStrip{
+      display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+      background:linear-gradient(90deg,#1a0f0f,#120d0d);
+      border:1px solid #3a2020; border-radius:8px; padding:12px 14px; cursor:pointer;
+    }
+    .liveStrip:hover{border-color:#5a2a2a;}
+    .liveTag{
+      display:inline-flex; align-items:center; gap:7px; flex:0 0 auto;
+      color:#ff5252; font-weight:900; letter-spacing:.5px; font-size:13px;
+    }
+    .liveDot{width:10px; height:10px; border-radius:999px; background:#ff3b3b; box-shadow:0 0 0 0 rgba(255,59,59,.6); animation:livePulse 1.4s ease-out infinite;}
+    @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(255,59,59,.55);}70%{box-shadow:0 0 0 9px rgba(255,59,59,0);}100%{box-shadow:0 0 0 0 rgba(255,59,59,0);}}
+    .liveBody{flex:1 1 220px; min-width:0;}
+    .liveNow{font-weight:800; color:#fff; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+    .liveViewers{color:#bdbdbd; font-size:12px; margin-top:2px;}
+    .liveViewers b{color:#ff8a8a;}
+    /* 偽バナー広告 */
+    .adBanner{
+      position:relative; display:flex; align-items:center; gap:12px;
+      border:1px dashed #4a3a14; border-radius:8px; padding:12px 40px 12px 14px;
+      background:repeating-linear-gradient(45deg,#161208 0 12px,#181409 12px 24px);
+    }
+    .adBadge{flex:0 0 auto; font-size:10px; font-weight:900; color:#000; background:#caa14a; border-radius:3px; padding:2px 6px; letter-spacing:.5px;}
+    .adText{flex:1; color:#e8dca8; font-size:13px; line-height:1.55;}
+    .adText b{color:#ffd16c;}
+    .adClose{position:absolute; right:8px; top:8px; width:26px; height:26px; border-radius:6px; border:1px solid #3a3320; background:#0d0b06; color:#caa14a; cursor:pointer; font-weight:900;}
+    .adClose:hover{background:#1a1509;}
+    /* 本日の検体 */
+    .dailyPick{
+      display:grid; grid-template-columns:160px 1fr; gap:14px;
+      border:1px solid #2b2b2b; border-radius:10px; overflow:hidden; background:#0e0e0e; cursor:pointer;
+    }
+    .dailyPick:hover{border-color:#3c3c3c;}
+    .dailyThumb{position:relative; aspect-ratio:16/9; background:#050505;}
+    .dailyThumb img{width:100%; height:100%; object-fit:cover; display:block;}
+    .dailyFlag{position:absolute; left:8px; top:8px; background:var(--r122-orange); color:#000; font-weight:900; font-size:11px; padding:3px 7px; border-radius:4px;}
+    .dailyMeta{padding:12px 14px 12px 0; display:flex; flex-direction:column; justify-content:center;}
+    .dailyKicker{color:var(--r122-orange); font-weight:900; font-size:12px; letter-spacing:.06em; margin-bottom:4px;}
+    .dailyTitle{font-size:17px; font-weight:900; color:#fff; line-height:1.3; margin:0 0 4px;}
+    .dailySub{color:#bdbdbd; font-size:13px; line-height:1.5;}
+    @media (max-width:620px){
+      .dailyPick{grid-template-columns:1fr;}
+      .dailyMeta{padding:12px 14px;}
+    }
+
+    /* ===== Related ===== */
+    .relatedBox{margin-top:14px;}
+    .relatedHead{font-weight:900; font-size:14px; color:#ddd; margin:0 0 10px;}
+    .relatedGrid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+    @media (max-width:620px){.relatedGrid{grid-template-columns:1fr 1fr;}}
+    .relCard{background:#141414; border:1px solid #262626; border-radius:6px; overflow:hidden; cursor:pointer;}
+    .relCard:hover{border-color:#3a3a3a;}
+    .relCard .rt{position:relative; aspect-ratio:16/9; background:#050505;}
+    .relCard .rt img{width:100%; height:100%; object-fit:cover; display:block;}
+    .relCard .rd{position:absolute; right:5px; bottom:5px; background:rgba(0,0,0,.82); color:#fff; font-size:10px; font-weight:900; padding:2px 5px; border-radius:3px;}
+    .relCard .rtitle{padding:7px 8px; font-size:12px; font-weight:700; color:#eee; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+
+    /* ===== Comments（培養日誌） ===== */
+    .commentBox{margin-top:16px; border-top:1px solid #222; padding-top:14px;}
+    .commentHead{font-weight:900; font-size:14px; color:#ddd; margin:0 0 10px; display:flex; gap:8px; align-items:center;}
+    .commentHead .cCount{color:#888; font-weight:700; font-size:12px;}
+    .cForm{display:grid; gap:8px; margin-bottom:14px;}
+    .cForm .cRow{display:flex; gap:8px; flex-wrap:wrap;}
+    .cForm input, .cForm textarea{
+      background:#0c0c0c; border:1px solid #2a2a2a; border-radius:6px; color:#fff; padding:9px 11px; font-size:14px; font-family:inherit;
+    }
+    .cForm input{flex:0 0 150px; max-width:150px;}
+    .cForm textarea{flex:1; min-width:160px; width:100%; resize:vertical; min-height:42px;}
+    .cForm .cSubmit{justify-self:start; padding:9px 18px; border-radius:6px; border:2px solid var(--r122-orange); background:rgba(255,153,0,.08); color:#fff; font-weight:800; cursor:pointer;}
+    .cForm .cSubmit:hover{background:rgba(255,153,0,.16);}
+    .cList{list-style:none; margin:0; padding:0; display:grid; gap:10px;}
+    .cItem{background:#101010; border:1px solid #232323; border-radius:7px; padding:10px 12px;}
+    .cItem.mine{border-color:#3a2e12;}
+    .cTop{display:flex; gap:8px; align-items:baseline; margin-bottom:4px;}
+    .cName{font-weight:900; font-size:13px; color:#ff9e4a;}
+    .cName.guest{color:#7ab8ff;}
+    .cMine{font-size:10px; color:#000; background:#caa14a; border-radius:3px; padding:1px 5px; font-weight:900;}
+    .cTime{font-size:11px; color:#777; margin-left:auto;}
+    .cText{font-size:13px; color:#e6e6e6; line-height:1.6; white-space:pre-wrap; word-break:break-word;}
+
+    /* ===== Rank（観測者ランク） ===== */
+    .rankBox{border:1px solid #2a2a2a; border-radius:8px; background:#0c0c0c; padding:12px 14px; margin:0 0 14px;}
+    .rankName{font-size:16px; font-weight:900; color:#ffb24a; margin:0 0 2px;}
+    .rankMeta{font-size:12px; color:#aaa; margin:0 0 9px;}
+    .rankBar{height:9px; border-radius:999px; background:#222; overflow:hidden;}
+    .rankBar > i{display:block; height:100%; width:0%; background:linear-gradient(90deg,#f90,#ffd16c); transition:width .5s ease;}
+    .rankBadges{display:flex; flex-wrap:wrap; gap:6px; margin-top:9px;}
+    .rankBadge{font-size:11px; font-weight:800; color:#000; background:#caa14a; border-radius:4px; padding:3px 8px;}
+    .rankBadge.locked{background:#1c1c1c; color:#666; border:1px solid #2a2a2a;}
+
+    /* ===== Sort + result count (並び替え) ===== */
+    .searchTools{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; flex-wrap:wrap; margin:2px 0 12px;
+      border-bottom:1px solid #1c1c1c; padding-bottom:12px;
+    }
+    .sortWrap{display:flex; align-items:center; gap:10px; min-width:0; flex-wrap:wrap;}
+    .sortLabel{display:inline-flex; align-items:center; gap:6px; color:#ddd; font-weight:900; font-size:14px; flex:0 0 auto;}
+    .sortLabel::before{content:"⇅"; color:var(--r122-orange); font-weight:900;}
+    .sortList{display:flex; gap:4px; list-style:none; margin:0; padding:0; flex-wrap:wrap;}
+    .sortList button{background:transparent; border:0; color:#bdbdbd; cursor:pointer; font-size:14px; padding:6px 10px; border-radius:999px; white-space:nowrap;}
+    .sortList button:hover{color:#fff; background:#1b1b1b;}
+    .sortList button.on{color:var(--r122-orange2); font-weight:900;}
+    .resultCount{color:#9b9b9b; font-size:13px; white-space:nowrap; flex:0 0 auto;}
+    .resultCount b{color:#fff; font-weight:900;}
+
+    /* ===== Related-search pills (横スクロール) ===== */
+    .relPills{position:relative; display:flex; align-items:center; gap:6px; margin:0 0 16px;}
+    .relScroll{display:flex; gap:8px; overflow-x:auto; scroll-behavior:smooth; scrollbar-width:none; flex:1; padding:2px 0;}
+    .relScroll::-webkit-scrollbar{display:none;}
+    .relScroll button{flex:0 0 auto; background:#161616; border:1px solid #2a2a2a; color:#e2e2e2; border-radius:999px; padding:7px 13px; font-size:13px; cursor:pointer; white-space:nowrap;}
+    .relScroll button:hover{background:#222; border-color:#3a3a3a; color:#fff;}
+    .relScroll button.lead{color:var(--r122-orange2); font-weight:800;}
+    .relArrow{flex:0 0 auto; width:30px; height:30px; border-radius:999px; border:1px solid #2c2c2c; background:#121212; color:#ddd; cursor:pointer; font-size:18px; line-height:1; display:grid; place-items:center;}
+    .relArrow:hover{background:#1e1e1e; color:#fff;}
+    .relArrow[disabled]{opacity:.3; cursor:default;}
+
+    /* ===== Card: channel + badge + kebab + eye views ===== */
+    .cardChan{display:flex; align-items:center; gap:6px; margin:0 0 6px; min-width:0;}
+    .cardChan .uname{font-weight:800; font-size:12px; color:#cfcfcf; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+    .vbadge{flex:0 0 auto; width:15px; height:15px; border-radius:999px; display:grid; place-items:center; font-size:9px; font-weight:900; line-height:1;}
+    .vbadge.verified{background:var(--r122-orange); color:#000;}
+    .vbadge.partner{background:#2f6fd0; color:#fff;}
+    .vbadge.trophy{background:transparent; font-size:13px;}
+    .kebab{margin-left:auto; flex:0 0 auto; width:24px; height:24px; border-radius:6px; border:0; background:transparent; color:#9a9a9a; cursor:pointer; font-size:18px; line-height:1; letter-spacing:-1px;}
+    .kebab:hover{background:#1d1d1d; color:#fff;}
+    .cardStats .views{display:inline-flex; align-items:center; gap:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+
+    /* ===== Pagination (.pager) ===== */
+    .pager{display:flex; justify-content:center; align-items:center; gap:6px; flex-wrap:wrap; margin:26px 0 0;}
+    .pager button{min-width:38px; height:38px; padding:0 10px; border-radius:5px; border:1px solid #2a2a2a; background:#161616; color:#e2e2e2; font-weight:800; font-size:14px; cursor:pointer;}
+    .pager button:hover:not([disabled]){background:#242424; color:#fff;}
+    .pager button.cur{background:#2a2a2a; color:#fff; cursor:default;}
+    .pager button.nav{background:var(--r122-orange); color:#000;}
+    .pager button.nav:hover:not([disabled]){filter:brightness(1.07);}
+    .pager button[disabled]{opacity:.4; cursor:default;}
+
+    @media (max-width:1150px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+    @media (max-width:860px){
+      .topbar{flex-wrap:wrap; align-items:center; gap:10px;}
+      .search{order:2; flex:1 0 100%; max-width:none; margin-left:0;}
+      .topIcons{margin-left:auto;}
+      .grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+      .subnav{gap:20px;}
+    }
+    @media (max-width:620px){
+      .gatePanel{padding:18px 14px 16px;}
+      .gateInner{padding:20px 14px 18px;}
+      .gateBtns{grid-template-columns:1fr;}
+      .topbar{padding:10px 12px;}
+      .topLogo{font-size:29px;}
+      .pill{padding:8px 11px;}
+      .topIcons .circ:nth-child(1), .topIcons .circ:nth-child(2){display:none;}
+      .subnav{padding:9px 12px;}
+      .content{padding:18px 12px 36px;}
+      .pageHead{display:block;}
+      .resultMeta{display:block; margin-top:5px;}
+      .grid{grid-template-columns:1fr;}
+      .modal{padding:10px;}
+      .modalBox{max-height:calc(100vh - 20px);}
+      .playerFrame img{max-height:42vh;}
+    }
+  </style>
+</head>
+
+<body>
+  <section class="gateWrap" id="gate">
+    <div class="gatePanel">
+      <div class="gateInner">
+        <div class="langRow">
+          <button class="langBtn" id="langBtn" type="button">Japanese <span class="car">▼</span></button>
+        </div>
+
+        <div class="phLogo" aria-hidden="true">
+          <span class="porn">Parn</span><span class="hub">hub</span>
+        </div>
+
+        <h1 class="gateH1">このサイトはアダルトサイトです。</h1>
+
+        <div class="noticeBtn"><span>Notice to Users</span></div>
+
+        <p class="gateP">
+          このウェブサイトには、ヌードや露骨な性行為描写を含む、年齢制限のあるコンテンツが含まれています。
+          クリックすることにより、あなたは <b>122歳以上</b>、またはあなたがウェブサイトにアクセスしている司法管轄区の成人年齢であることを確認し、
+          <b>性的に露骨なコンテンツ</b>を閲覧することに同意するものとします。
+        </p>
+
+        <div class="law">"法執行機関への通知"（ほうしっこうきかんへのつうち）</div>
+
+        <div class="gateBtns">
+          <button class="gateBtn" id="enterBtn" type="button">私は122歳以上です - 入力</button>
+          <button class="gateBtn" id="exitBtn" type="button">私は122歳未満です - 出口</button>
+        </div>
+
+        <div class="footLinks">
+          <a href="gallery.html">ペアレンタルコントロールページ</a>では、本サイトへのアクセスを簡単にブロックできる方法が説明されています。<br>
+          <a href="index.html">新しい利用規約</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="siteStage" id="site">
+    <header class="topbar">
+      <button class="hamb" id="hambBtn" type="button" aria-label="メニュー" aria-expanded="false"><span></span><span></span><span></span></button>
+      <div class="hambMenu" id="hambMenu" role="menu" aria-label="カテゴリ"></div>
+
+      <div class="topLogo" aria-label="ParnHub R-122">
+        <span style="color:#fff">Parn</span><span class="hub">hub</span>
+      </div>
+
+      <div class="search" role="search" aria-label="R-122 search">
+        <span class="icon">🔎</span>
+        <input id="q" type="search" placeholder="Search R-122" autocomplete="off">
+        <button class="clearSearch" id="clearSearch" type="button" aria-label="検索をクリア">✕</button>
+      </div>
+
+      <button class="pill" type="button" id="aiBtn">AIで解析</button>
+
+      <div class="topIcons">
+        <button class="circ" id="icoPlay" type="button" title="ランダム再生" aria-label="ランダム再生">▶</button>
+        <button class="circ" id="icoPhoto" type="button" title="写真&GIF" aria-label="写真とGIF">📷</button>
+        <button class="circ" id="icoUser" type="button" title="アカウント" aria-label="アカウント">👤</button>
+      </div>
+    </header>
+
+    <nav class="subnav" aria-label="primary">
+      <a href="#" class="dd" data-chip="all">ホーム</a>
+      <a href="#" class="dd" data-chip="cell">動画</a>
+      <a href="#" class="dd" data-chip="dna">カテゴリ</a>
+      <a href="#" class="dd" data-chip="neuron">ライブ</a>
+      <a href="#" class="dd" data-chip="immune">コミュニティ</a>
+      <a href="#" class="dd" data-chip="micro">写真&GIF</a>
+      <span class="mut" style="margin-left:auto; white-space:nowrap;">JA</span>
+    </nav>
+
+    <main class="content">
+      <div class="pageHead">
+        <h2 class="pageTitle">R-122 バイオ動画 🔴</h2>
+        <span class="resultMeta" id="resultMeta">0 videos</span>
+      </div>
+
+      <div class="featRow" id="featRow">
+        <div class="liveStrip" id="liveStrip" role="button" tabindex="0" aria-label="ライブ培養中継">
+          <span class="liveTag"><span class="liveDot"></span>LIVE 培養中継</span>
+          <div class="liveBody">
+            <div class="liveNow" id="liveNow">接続中…</div>
+            <div class="liveViewers" id="liveViewers">👁 <b>0</b> 体が同時観測中</div>
+          </div>
+        </div>
+
+        <div class="adBanner" id="adBanner" hidden>
+          <span class="adBadge">AD</span>
+          <span class="adText" id="adText"></span>
+          <button class="adClose" id="adClose" type="button" aria-label="広告を閉じる">×</button>
+        </div>
+
+        <div class="dailyPick" id="dailyPick" role="button" tabindex="0" aria-label="本日の検体">
+          <div class="dailyThumb">
+            <img id="dailyImg" alt="">
+            <span class="dailyFlag">本日の検体</span>
+          </div>
+          <div class="dailyMeta">
+            <div class="dailyKicker">🧫 DAILY SPECIMEN</div>
+            <p class="dailyTitle" id="dailyTitle">—</p>
+            <p class="dailySub" id="dailySub">—</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chips" id="chips" aria-label="filter chips"></div>
+
+      <section class="grid" id="grid" aria-label="video grid"></section>
+      <div class="empty" id="emptyState">
+        該当するバイオ動画は見つかりませんでした。<br>
+        別の刺激的な生物学ワードを入力してください。
+      </div>
+    </main>
+  </section>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="detail">
+    <div class="modalBox">
+      <div class="modalTop">
+        <div id="mTitle">DETAIL</div>
+        <button class="xbtn" id="mClose" type="button">×</button>
+      </div>
+      <div class="modalBody">
+        <div class="playerFrame">
+          <img id="mImg" alt="" />
+          <div class="playOverlay" id="playOverlay" role="button" tabindex="0" aria-label="再生"><div class="playTriangle">▶</div></div>
+          <div class="playStatus" id="playStatus">
+            <div class="psMain" id="psMain"></div>
+            <div class="psBar"><i id="psBar"></i></div>
+            <div class="psSub" id="psSub"></div>
+            <div class="psCode" id="psCode"></div>
+            <button class="psRetry" id="psRetry" type="button">別の動画を観る</button>
+          </div>
+        </div>
+        <div class="detailTitle" id="mDetailTitle"></div>
+        <div class="detailStats" id="mStats"></div>
+        <div class="modalText" id="mText"></div>
+        <div class="tagRow" id="mTags"></div>
+        <div class="punch" id="mPunch"></div>
+        <div class="analysisBox" id="analysisBox">
+          <div class="analysisHead">
+            <span>R-122 AI BIO-ANALYSIS</span>
+            <span id="analysisScore">--%</span>
+          </div>
+          <div class="analysisBody" id="analysisBody">
+            <div>生体刺激パターンを解析中…</div>
+            <div class="meter"><i id="analysisMeter"></i></div>
+            <div id="analysisText"></div>
+          </div>
+        </div>
+
+        <div class="relatedBox" id="relatedBox">
+          <p class="relatedHead">関連する生命現象</p>
+          <div class="relatedGrid" id="relatedGrid"></div>
+        </div>
+
+        <div class="commentBox">
+          <p class="commentHead">培養日誌 <span class="cCount" id="cCount"></span></p>
+          <div class="cForm">
+            <div class="cRow">
+              <input id="cName" type="text" maxlength="20" placeholder="観測者名（任意）" autocomplete="off">
+            </div>
+            <textarea id="cText" maxlength="140" placeholder="この検体への観測メモを残す…（140字まで・この端末にのみ保存）"></textarea>
+            <button class="cSubmit" id="cSubmit" type="button">日誌に記録する</button>
+          </div>
+          <ul class="cList" id="cList"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- アカウント（視聴履歴）モーダル -->
+  <div class="modal" id="acctModal" role="dialog" aria-modal="true" aria-label="account">
+    <div class="modalBox">
+      <div class="modalTop">
+        <div>👤 R-122 アカウント</div>
+        <button class="xbtn" id="acctClose" type="button">×</button>
+      </div>
+      <div class="modalBody acctBody">
+        <p class="acctName" id="acctName">ゲスト観測者 #122</p>
+        <p class="acctSub">プレミアム培養プラン：未加入。視聴履歴はこの端末にのみ保存されます（外部送信なし）。</p>
+
+        <div class="rankBox">
+          <p class="rankName" id="rankName">—</p>
+          <p class="rankMeta" id="rankMeta">—</p>
+          <div class="rankBar"><i id="rankBar"></i></div>
+          <div class="rankBadges" id="rankBadges"></div>
+        </div>
+
+        <p class="histTitle">最近観測した生命現象</p>
+        <ul class="histList" id="histList"></ul>
+        <div class="acctActions">
+          <button class="psRetry" id="histClear" type="button">履歴を消去</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="r122Toast" id="r122Toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function(){
+      "use strict";
+
+      const gate = document.getElementById("gate");
+      const site = document.getElementById("site");
+      const enter = document.getElementById("enterBtn");
+      const exitBtn = document.getElementById("exitBtn");
+      const grid = document.getElementById("grid");
+      const chipsBox = document.getElementById("chips");
+      const resultMeta = document.getElementById("resultMeta");
+      const emptyState = document.getElementById("emptyState");
+      const q = document.getElementById("q");
+      const clearSearch = document.getElementById("clearSearch");
+      const aiBtn = document.getElementById("aiBtn");
+
+      const LS_KEY = "r122_entered";
+      const PLACEHOLDER = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 720'><rect width='1280' height='720' fill='#080808'/><rect x='50' y='50' width='1180' height='620' rx='22' fill='#111' stroke='#333' stroke-width='6'/><text x='640' y='345' text-anchor='middle' fill='#ff9900' font-family='Arial' font-size='58' font-weight='800'>R-122</text><text x='640' y='410' text-anchor='middle' fill='#aaa' font-family='Arial' font-size='24'>BIO CONTENT UNAVAILABLE</text></svg>");
+
+      const FILTERS = [
+        { key:"all", label:"すべて" },
+        { key:"new", label:"直近" },
+        { key:"atp", label:"ATP" },
+        { key:"dna", label:"DNA" },
+        { key:"neuron", label:"神経" },
+        { key:"cell", label:"細胞" },
+        { key:"immune", label:"免疫" },
+        { key:"micro", label:"電子顕微鏡" }
+      ];
+
+      const VIDS = [
+        {
+          id:"dna", title:"究極の結合体：DNA二重螺旋", sub:"A–T / G–C —— 水素結合の“硬派なセクシー”", dur:"12:22",
+          img:"img/DNA.png", uploader:"Helix Factory", views:"12.2M", rating:98, date:"3日前", category:"Molecular Biology", tags:["dna","micro","new"], quality:"HD",
+          text:"A と T、G と C が規則正しく向かい合う二重螺旋。生命の設計図が、これほど美しく折りたたまれているという事実だけで十分に刺激的です。",
+          punch:"エロスの根源、<b>DNA</b>です。保存・複製・発現、すべての始まりがここにあります。"
+        },
+        {
+          id:"mito", title:"ミトコンドリアの断面：生命の熱源", sub:"剥き出しのクリステ、止まらないATP産生", dur:"24:18",
+          img:"img/mitochondria.png", uploader:"ATP Addict", views:"8.8M", rating:97, date:"1週間前", category:"Cell Biology", tags:["atp","cell","micro","new"], quality:"4K",
+          text:"内膜が折れ込んだクリステ構造は、ATP合成のための面積を稼ぐ合理性そのもの。生命活動の電源ユニットを覗き込むような映像です。",
+          punch:"この圧倒的なATP産生能力。<b>ミトコンドリア</b>なしでは、我々は一歩も動けません。"
+        },
+        {
+          id:"neuron", title:"ニューロンの発火：禁断のパルス", sub:"脳内を駆け巡る電気信号のライブ感", dur:"09:46",
+          img:"img/neuron.png", uploader:"Synapse Channel", views:"7.1M", rating:96, date:"5日前", category:"Neuroscience", tags:["neuron","cell","new"], quality:"HD",
+          text:"膜電位の変化が軸索を走り、シナプスを越えて次の細胞へ伝わっていく。思考も快感も恐怖も、最終的にはこの発火の連鎖です。",
+          punch:"シナプス間隙を飛び交う神経伝達物質。これこそが我々の<b>快感</b>の正体です。"
+        },
+        {
+          id:"mitosis", title:"有糸分裂：二つに分かれる瞬間", sub:"染色体が中央に並ぶ、細胞周期の山場", dur:"18:04",
+          img:"img/mitosis.png", uploader:"Cell Cycle Pro", views:"5.4M", rating:94, date:"2週間前", category:"Cell Biology", tags:["cell","dna"], quality:"HD",
+          text:"核膜が消え、染色体が凝縮し、紡錘体が両極から引っ張る。細胞が自分自身を二つへ分ける、静かな大事件です。",
+          punch:"分裂とは増殖。増殖とは生命の強引な前進です。"
+        },
+        {
+          id:"enzyme", title:"酵素反応：基質を受け入れる活性部位", sub:"ぴったりはまる、特異性の美学", dur:"07:32",
+          img:"img/enzyme.png", uploader:"Active Site Lab", views:"3.9M", rating:95, date:"4週間前", category:"Biochemistry", tags:["cell","atp"], quality:"HD",
+          text:"酵素の活性部位に基質が結合し、反応の活性化エネルギーが下がる。生命は力任せではなく、触媒という裏技で進みます。",
+          punch:"鍵と鍵穴。いや、正確には<b>誘導適合</b>。そこに化学の色気があります。"
+        },
+        {
+          id:"protein", title:"タンパク質フォールディング：折りたたまれる快楽", sub:"一次構造から立体構造へ、形が機能になる", dur:"14:09",
+          img:"img/protein-folding.png", uploader:"Fold Master", views:"4.6M", rating:93, date:"6日前", category:"Biochemistry", tags:["cell","micro","new"], quality:"HD",
+          text:"アミノ酸配列が、相互作用に導かれて立体構造へ折りたたまれていく。タンパク質は“形”になって初めて仕事を始めます。",
+          punch:"ただの鎖が機能を持つ瞬間。これはもう構造生物学の官能です。"
+        },
+        {
+          id:"immune", title:"免疫細胞の追跡：侵入者を逃がさない", sub:"異物認識、接近、攻撃。白血球の仕事ぶり", dur:"11:58",
+          img:"img/immune-cell.png", uploader:"White Blood Unit", views:"6.0M", rating:97, date:"8日前", category:"Immunology", tags:["immune","cell","new"], quality:"HD",
+          text:"免疫細胞は常に体内を巡回し、異物や異常細胞を探している。平和な体内環境は、この地味で執拗な監視によって守られています。",
+          punch:"体内警備のプロフェッショナル。免疫細胞、あまりにも頼もしすぎます。"
+        },
+        {
+          id:"virus", title:"ウイルス侵入：細胞膜への接近", sub:"吸着、侵入、複製。小さすぎる侵略者", dur:"16:40",
+          img:"img/virus-entry.png", uploader:"Viral Studies", views:"9.2M", rating:92, date:"2日前", category:"Virology", tags:["immune","cell","micro","new"], quality:"HD",
+          text:"ウイルスは自力では増殖できない。だから宿主細胞に入り込み、細胞の仕組みを利用して自分を増やす。生命と非生命の境界にいる存在です。",
+          punch:"侵入して、乗っ取って、増える。ウイルスの戦略は単純で、それゆえに強烈です。"
+        },
+        {
+          id:"eye", title:"眼球構造：光を受け止める器官", sub:"網膜・水晶体・視神経、視覚の入口", dur:"10:15",
+          img:"img/eye.png", uploader:"Optic Archive", views:"4.1M", rating:96, date:"10日前", category:"Anatomy", tags:["neuron","cell"], quality:"HD",
+          text:"光は角膜と水晶体で屈折し、網膜へ届く。そこから電気信号へ変換され、視神経を通じて脳へ送られます。",
+          punch:"“見る”とは、外界を神経信号に変換する作業です。眼球、仕事が美しすぎます。"
+        },
+        {
+          id:"synapse", title:"シナプス間隙：伝達物質の放出", sub:"届きそうで届かない距離を化学で越える", dur:"08:29",
+          img:"img/neuron.png", uploader:"Neuro Night", views:"6.7M", rating:98, date:"今日", category:"Neuroscience", tags:["neuron","micro","new"], quality:"HD",
+          text:"電気信号はシナプスで一度途切れ、神経伝達物質として化学信号に変わる。わずかな隙間を超えるための精密な仕組みです。",
+          punch:"届かないからこそ、伝えるための仕組みが発達する。シナプス、あまりにもドラマチックです。"
+        },
+        {
+          id:"chloroplast", title:"葉緑体：光を糖へ変える装置", sub:"光合成、電子伝達、炭素固定の緑の工場", dur:"21:03",
+          img:"img/chloroplast.png", uploader:"Green Reaction", views:"2.8M", rating:91, date:"3週間前", category:"Plant Biology", tags:["atp","cell"], quality:"HD",
+          text:"光エネルギーを受け取り、ATPとNADPHを経由して糖を作る。葉緑体は植物の中にある太陽光変換システムです。",
+          punch:"光を食べるように生きる。葉緑体の発想、かなり攻めています。"
+        },
+        {
+          id:"heart", title:"心筋細胞：止まらない拍動", sub:"興奮収縮連関、リズム、生命維持", dur:"19:51",
+          img:"img/cardiac-muscle.png", uploader:"Pulse Works", views:"5.9M", rating:95, date:"12日前", category:"Physiology", tags:["cell","atp","neuron"], quality:"HD",
+          text:"電気的興奮が心筋細胞に伝わり、カルシウムが動き、収縮が起こる。心臓は休まず、ただリズムを刻み続けます。",
+          punch:"拍動とは生命のBGM。心筋細胞、労働環境が過酷すぎます。"
+        }
+      ];
+
+      // 封印検体（通常は出ない。隠しワード検索でのみ出現）
+      const SEALED = {
+        id:"sealed", title:"検体 0号：培養禁止", sub:"記録から抹消された生命現象", dur:"--:--",
+        img:"", uploader:"[REDACTED]", views:"???", rating:0, date:"不明", category:"Forbidden", tags:["禁忌"], quality:"???",
+        text:"この検体に関する記録は、R-122管理委員会により封印されています。観測は推奨されません。にもかかわらず、あなたはここへ辿り着いた。",
+        punch:"見てしまった以上、あなたも“観測者”の一人です。",
+        sealed:true
+      };
+      const SECRET_WORDS = ["蛹", "極秘", "r-123", "r123", "未知", "禁忌", "0号", "検体0"];
+      let sealedFound = false;
+
+      let activeChip = "all";
+      let visibleIds = [];
+      let lastOpened = null;
+
+      function showSite(){
+        try{ localStorage.setItem(LS_KEY, "1"); }catch(_){}
+        gate.classList.add("fadeOut");
+        setTimeout(function(){
+          gate.style.display = "none";
+          site.classList.add("show");
+          try{ window.scrollTo({top:0, behavior:"smooth"}); }catch(_){}
+        }, 260);
+      }
+
+      function goOut(){ location.href = "gallery.html"; }
+      enter.addEventListener("click", showSite);
+      exitBtn.addEventListener("click", goOut);
+
+      function el(tag, className, text){
+        const node = document.createElement(tag);
+        if(className) node.className = className;
+        if(text != null) node.textContent = text;
+        return node;
+      }
+
+      function includesText(v, kw){
+        if(!kw) return true;
+        const hay = [v.title, v.sub, v.text, v.uploader, v.category, ...(v.tags || [])].join(" ").toLowerCase();
+        return hay.includes(kw);
+      }
+
+      function matchesChip(v){
+        return activeChip === "all" || (v.tags || []).includes(activeChip);
+      }
+
+      function renderChips(){
+        chipsBox.textContent = "";
+        FILTERS.forEach(function(f){
+          const btn = el("button", "chip" + (f.key === activeChip ? " active" : ""), f.label);
+          btn.type = "button";
+          btn.dataset.chip = f.key;
+          btn.addEventListener("click", function(){
+            activeChip = f.key;
+            renderChips();
+            renderCards();
+          });
+          chipsBox.appendChild(btn);
+        });
+      }
+
+      function isSecretQuery(kw){
+        if(!kw) return false;
+        return SECRET_WORDS.some(function(w){ return kw.includes(w.toLowerCase()); });
+      }
+
+      function renderCards(){
+        const kw = (q.value || "").trim().toLowerCase();
+        let list = VIDS.filter(function(v){ return matchesChip(v) && includesText(v, kw); });
+
+        // 隠しワード検索 → 封印検体を先頭に出現させる
+        if(isSecretQuery(kw)){
+          if(!sealedFound){
+            sealedFound = true;
+            toast("⚠ 未登録の検体が培養槽から検出されました…");
+          }
+          list = [SEALED].concat(list);
+        }
+
+        visibleIds = list.map(function(v){ return v.id; });
+        grid.textContent = "";
+
+        list.forEach(function(v){
+          const card = el("article", "card");
+          card.tabIndex = 0;
+          card.dataset.id = v.id;
+          if(v.sealed) card.style.borderColor = "#5a2a2a";
+
+          const thumb = el("div", "thumb");
+          const img = document.createElement("img");
+          img.src = v.img || PLACEHOLDER;
+          img.alt = v.title;
+          img.loading = "lazy";
+          img.addEventListener("error", function(){ img.src = PLACEHOLDER; }, {once:true});
+          thumb.appendChild(img);
+          thumb.appendChild(el("div", "dur", v.dur));
+          thumb.appendChild(el("div", "quality", v.quality || "HD"));
+
+          const meta = el("div", "meta");
+          meta.appendChild(el("h3", "title", v.title));
+          meta.appendChild(el("p", "sub", v.sub));
+          const stats = el("div", "cardStats");
+          stats.appendChild(el("span", "uploader", v.uploader + " ・ " + v.views + " views"));
+          stats.appendChild(el("span", "rating", v.sealed ? "🚫 封印" : ("👍 " + v.rating + "%")));
+          meta.appendChild(stats);
+
+          card.appendChild(thumb);
+          card.appendChild(meta);
+          grid.appendChild(card);
+        });
+
+        const total = VIDS.length;
+        resultMeta.textContent = list.length + " / " + total + " videos";
+        emptyState.classList.toggle("show", list.length === 0);
+      }
+
+      const modal = document.getElementById("modal");
+      const mClose = document.getElementById("mClose");
+      const mTitle = document.getElementById("mTitle");
+      const mDetailTitle = document.getElementById("mDetailTitle");
+      const mImg = document.getElementById("mImg");
+      const mStats = document.getElementById("mStats");
+      const mText = document.getElementById("mText");
+      const mTags = document.getElementById("mTags");
+      const mPunch = document.getElementById("mPunch");
+      const analysisBox = document.getElementById("analysisBox");
+      const analysisScore = document.getElementById("analysisScore");
+      const analysisMeter = document.getElementById("analysisMeter");
+      const analysisText = document.getElementById("analysisText");
+
+      function pick(id){
+        if(id === "sealed") return SEALED;
+        return VIDS.find(function(x){ return x.id === id; });
+      }
+
+      function renderStats(v){
+        mStats.textContent = "";
+        const pieces = [
+          v.views + " views",
+          "投稿日: " + v.date,
+          "投稿者: " + v.uploader,
+          "カテゴリ: " + v.category
+        ];
+        pieces.forEach(function(t){ mStats.appendChild(el("span", "", t)); });
+        const rate = el("span", "", "評価: ");
+        const bar = el("span", "rateBar");
+        const inner = document.createElement("i");
+        inner.style.width = Math.max(0, Math.min(100, v.rating)) + "%";
+        bar.appendChild(inner);
+        rate.appendChild(bar);
+        rate.appendChild(document.createTextNode(" " + v.rating + "%"));
+        mStats.appendChild(rate);
+      }
+
+      function renderTags(v){
+        mTags.textContent = "";
+        (v.tags || []).forEach(function(t){
+          const tag = el("button", "tagPill", "#" + t);
+          tag.type = "button";
+          tag.addEventListener("click", function(){
+            activeChip = t;
+            closeModal();
+            renderChips();
+            renderCards();
+          });
+          mTags.appendChild(tag);
+        });
+      }
+
+      function openModal(v, withAnalysis){
+        lastOpened = v;
+        mTitle.textContent = "DETAIL";
+        mDetailTitle.textContent = v.title;
+        mImg.src = v.img;
+        mImg.alt = v.title;
+        mImg.onerror = function(){ mImg.src = PLACEHOLDER; };
+        renderStats(v);
+        mText.textContent = v.text;
+        renderTags(v);
+        mPunch.innerHTML = v.punch;
+        analysisBox.classList.remove("show");
+        analysisScore.textContent = "--%";
+        analysisMeter.style.width = "0%";
+        analysisText.textContent = "";
+        resetPlayStatus();
+        pushHistory(v);
+        markSeen(v);
+        renderRelated(v);
+        renderComments(v);
+        modal.classList.add("show");
+        modal.scrollTop = 0;
+        if(withAnalysis) runAnalysis(v);
+      }
+
+      function closeModal(){
+        modal.classList.remove("show");
+        try{ mImg.src = ""; }catch(_){}
+      }
+
+      function runAnalysis(v){
+        analysisBox.classList.add("show");
+        analysisText.textContent = "生体刺激パターンを解析中…";
+        analysisScore.textContent = "SCAN";
+        analysisMeter.style.width = "12%";
+        setTimeout(function(){ analysisMeter.style.width = "62%"; }, 180);
+        setTimeout(function(){
+          const score = Math.max(88, Math.min(99, v.rating + ((v.tags || []).includes("new") ? 1 : 0)));
+          analysisMeter.style.width = score + "%";
+          analysisScore.textContent = score + "%";
+          analysisText.textContent = "推定興奮源: " + v.category + " / 主要タグ: " + (v.tags || []).join(", ") + "。結論: 視聴に値する生命現象です。";
+        }, 520);
+      }
+
+      mClose.addEventListener("click", closeModal);
+      modal.addEventListener("click", function(e){ if(e.target === modal) closeModal(); });
+      document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeModal(); });
+
+      grid.addEventListener("click", function(e){
+        const card = e.target.closest(".card");
+        if(!card) return;
+        const v = pick(card.dataset.id);
+        if(v) openModal(v, false);
+      });
+      grid.addEventListener("keydown", function(e){
+        if(e.key !== "Enter" && e.key !== " ") return;
+        const card = e.target.closest(".card");
+        if(!card) return;
+        e.preventDefault();
+        const v = pick(card.dataset.id);
+        if(v) openModal(v, false);
+      });
+
+      q.addEventListener("input", renderCards);
+      clearSearch.addEventListener("click", function(){
+        q.value = "";
+        q.focus();
+        renderCards();
+      });
+
+      document.querySelectorAll(".subnav [data-chip]").forEach(function(a){
+        a.addEventListener("click", function(e){
+          e.preventDefault();
+          if(a.textContent.trim() === "ライブ"){
+            const strip = document.getElementById("liveStrip");
+            if(strip){ try{ strip.scrollIntoView({ behavior:"smooth", block:"center" }); }catch(_){} toast("🔴 培養中継はこちら"); }
+            return;
+          }
+          activeChip = a.dataset.chip || "all";
+          renderChips();
+          renderCards();
+        });
+      });
+
+      aiBtn.addEventListener("click", function(){
+        const pool = visibleIds.length ? visibleIds.map(pick).filter(Boolean) : VIDS;
+        const v = lastOpened || pool[Math.floor(Math.random() * pool.length)] || VIDS[0];
+        openModal(v, true);
+      });
+
+      /* ===== Toast ===== */
+      const toastEl = document.getElementById("r122Toast");
+      let toastTimer = null;
+      function toast(msg){
+        if(!toastEl) return;
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2200);
+      }
+
+      /* ===== 再生パロディ（削除/検閲/培養期限切れ） ===== */
+      const playOverlay = document.getElementById("playOverlay");
+      const playStatus = document.getElementById("playStatus");
+      const psMain = document.getElementById("psMain");
+      const psSub = document.getElementById("psSub");
+      const psCode = document.getElementById("psCode");
+      const psBar = document.getElementById("psBar");
+      const psRetry = document.getElementById("psRetry");
+      let psTimers = [];
+
+      function clearPsTimers(){ psTimers.forEach(clearTimeout); psTimers = []; }
+      function resetPlayStatus(){
+        clearPsTimers();
+        playStatus.classList.remove("show");
+        playOverlay.classList.add("live");
+        psBar.style.width = "0%";
+      }
+
+      const PLAY_OUTCOMES = [
+        { main:"この動画は削除されました", sub:"権利者（自然界）からの申し立てにより、当該生命現象の配信は終了しました。", code:"ERR_DMCA_NATURE_0x122" },
+        { main:"検閲済み — R-122", sub:"あまりに露骨な細胞分裂シーンが含まれていたため、一部がモザイク処理されました。", code:"REDACTED_BIO_0xCEN" },
+        { main:"培養期限切れ", sub:"このサンプルは培地の栄養を使い切りました。新しいサンプルを観測してください。", code:"ERR_CULTURE_EXPIRED" },
+        { main:"地域制限", sub:"あなたの生息域では、この生命現象を視聴できません。VPN（液胞）を経由してください。", code:"GEO_BLOCK_CYTOPLASM" },
+        { main:"再生開始…", sub:"…と思いきや、観測者効果により波動関数が収束。映像は静止画に戻りました。", code:"OBSERVER_COLLAPSE_∞", silly:true }
+      ];
+
+      function playParody(){
+        if(!lastOpened) return;
+        clearPsTimers();
+        playStatus.classList.add("show");
+        psRetry.style.display = "none";
+        psMain.textContent = "バッファリング中…";
+        psSub.textContent = "生体データをストリーミングしています。";
+        psCode.textContent = "buffering " + (lastOpened.id || "").toUpperCase();
+        psBar.style.width = "8%";
+        psTimers.push(setTimeout(function(){ psBar.style.width = "46%"; }, 260));
+        psTimers.push(setTimeout(function(){ psBar.style.width = "82%"; }, 620));
+        psTimers.push(setTimeout(function(){
+          psBar.style.width = "100%";
+          const o = PLAY_OUTCOMES[Math.floor(Math.random() * PLAY_OUTCOMES.length)];
+          psMain.textContent = o.main;
+          psSub.textContent = o.sub;
+          psCode.textContent = o.code;
+          psRetry.style.display = "inline-block";
+        }, 1050));
+      }
+
+      playOverlay.classList.add("live");
+      playOverlay.addEventListener("click", playParody);
+      playOverlay.addEventListener("keydown", function(e){
+        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); playParody(); }
+      });
+      psRetry.addEventListener("click", function(){
+        const pool = visibleIds.length ? visibleIds.map(pick).filter(Boolean) : VIDS;
+        const others = pool.filter(function(x){ return !lastOpened || x.id !== lastOpened.id; });
+        const v = others[Math.floor(Math.random() * others.length)] || pool[0];
+        if(v) openModal(v, false);
+      });
+
+      /* ===== 視聴履歴（この端末のみ） ===== */
+      const HIST_KEY = "r122_history";
+      const acctModal = document.getElementById("acctModal");
+      const acctClose = document.getElementById("acctClose");
+      const histList = document.getElementById("histList");
+      const histClear = document.getElementById("histClear");
+
+      function loadHistory(){
+        try{ return JSON.parse(localStorage.getItem(HIST_KEY) || "[]"); }catch(_){ return []; }
+      }
+      function saveHistory(arr){
+        try{ localStorage.setItem(HIST_KEY, JSON.stringify(arr.slice(0, 12))); }catch(_){}
+      }
+      function pushHistory(v){
+        const arr = loadHistory().filter(function(x){ return x.id !== v.id; });
+        arr.unshift({ id:v.id, title:v.title, t:Date.now() });
+        saveHistory(arr);
+      }
+      function fmtAgo(t){
+        const s = Math.floor((Date.now() - t) / 1000);
+        if(s < 60) return "たった今";
+        if(s < 3600) return Math.floor(s/60) + "分前";
+        if(s < 86400) return Math.floor(s/3600) + "時間前";
+        return Math.floor(s/86400) + "日前";
+      }
+      function renderHistory(){
+        const arr = loadHistory();
+        histList.textContent = "";
+        if(!arr.length){
+          const li = document.createElement("li");
+          li.className = "histEmpty";
+          li.style.cursor = "default";
+          li.textContent = "観測履歴なし。まだ何も培養していません。";
+          histList.appendChild(li);
+          histClear.style.display = "none";
+          return;
+        }
+        histClear.style.display = "inline-block";
+        arr.forEach(function(h){
+          const li = document.createElement("li");
+          const t = el("span", "ht", h.title);
+          const d = el("span", "hd", fmtAgo(h.t));
+          li.appendChild(t); li.appendChild(d);
+          li.addEventListener("click", function(){
+            const v = pick(h.id);
+            if(v){ closeAcct(); openModal(v, false); }
+          });
+          histList.appendChild(li);
+        });
+      }
+      function openAcct(){
+        renderRank();
+        renderHistory();
+        acctModal.classList.add("show");
+      }
+      function closeAcct(){ acctModal.classList.remove("show"); }
+      acctClose.addEventListener("click", closeAcct);
+      acctModal.addEventListener("click", function(e){ if(e.target === acctModal) closeAcct(); });
+      histClear.addEventListener("click", function(){
+        saveHistory([]);
+        renderHistory();
+        toast("視聴履歴を消去しました。");
+      });
+
+      /* ===== トップのアイコン群を実動作に ===== */
+      document.getElementById("icoPlay").addEventListener("click", function(){
+        const pool = visibleIds.length ? visibleIds.map(pick).filter(Boolean) : VIDS;
+        const v = pool[Math.floor(Math.random() * pool.length)] || VIDS[0];
+        toast("ランダム再生：" + v.title);
+        openModal(v, false);
+      });
+      document.getElementById("icoPhoto").addEventListener("click", function(){
+        activeChip = "micro";
+        renderChips();
+        renderCards();
+        toast("📷 写真&GIF（電子顕微鏡）モード");
+        try{ window.scrollTo({ top:0, behavior:"smooth" }); }catch(_){}
+      });
+      document.getElementById("icoUser").addEventListener("click", openAcct);
+
+      /* ===== ハンバーガー → カテゴリメニュー ===== */
+      const hambBtn = document.getElementById("hambBtn");
+      const hambMenu = document.getElementById("hambMenu");
+      FILTERS.forEach(function(f){
+        const b = document.createElement("button");
+        b.type = "button";
+        b.setAttribute("role", "menuitem");
+        b.textContent = f.label;
+        b.addEventListener("click", function(){
+          activeChip = f.key;
+          renderChips();
+          renderCards();
+          hambMenu.classList.remove("show");
+          hambBtn.setAttribute("aria-expanded", "false");
+          toast("カテゴリ：" + f.label);
+        });
+        hambMenu.appendChild(b);
+      });
+      hambBtn.addEventListener("click", function(e){
+        e.stopPropagation();
+        const open = hambMenu.classList.toggle("show");
+        hambBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      document.addEventListener("click", function(e){
+        if(!hambMenu.contains(e.target) && e.target !== hambBtn){
+          hambMenu.classList.remove("show");
+          hambBtn.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      /* ===== ゲートの言語ボタン（ネタ） ===== */
+      const langBtn = document.getElementById("langBtn");
+      if(langBtn){
+        const LANGS = ["Japanese", "English (培養中)", "古細菌語", "細胞間シグナル", "Japanese"];
+        let li = 0;
+        langBtn.addEventListener("click", function(){
+          li = (li + 1) % LANGS.length;
+          langBtn.childNodes[0].nodeValue = LANGS[li] + " ";
+          if(li !== 0 && li !== LANGS.length - 1){
+            toast("翻訳エンジンは培養中です。当面 Japanese のみ。");
+          }
+        });
+      }
+
+      /* ===== 観測者ランク（seen 集合・端末ローカル） ===== */
+      const SEEN_KEY = "r122_seen";
+      function loadSeen(){ try{ return JSON.parse(localStorage.getItem(SEEN_KEY) || "[]"); }catch(_){ return []; } }
+      function saveSeen(arr){ try{ localStorage.setItem(SEEN_KEY, JSON.stringify(arr)); }catch(_){} }
+      const RANKS = [
+        { min:0,  name:"観測ゲスト #122" },
+        { min:1,  name:"見習い培養士" },
+        { min:3,  name:"細胞観測員" },
+        { min:6,  name:"分子生物学の徒" },
+        { min:9,  name:"生命の探求者" },
+        { min:12, name:"全検体制覇・培養の探究者" }
+      ];
+      function standardSeenCount(seen){
+        return seen.filter(function(id){ return VIDS.some(function(v){ return v.id === id; }); }).length;
+      }
+      function rankFor(n){ let r = RANKS[0]; RANKS.forEach(function(x){ if(n >= x.min) r = x; }); return r; }
+      function markSeen(v){
+        const seen = loadSeen();
+        const before = rankFor(standardSeenCount(seen)).name;
+        if(seen.indexOf(v.id) === -1){ seen.push(v.id); saveSeen(seen); }
+        const after = rankFor(standardSeenCount(loadSeen())).name;
+        if(after !== before) toast("観測者ランク上昇：" + after);
+      }
+      function renderRank(){
+        const seen = loadSeen();
+        const n = standardSeenCount(seen);
+        const total = VIDS.length;
+        const r = rankFor(n);
+        let next = null;
+        RANKS.forEach(function(x){ if(x.min > n && next === null) next = x; });
+        document.getElementById("rankName").textContent = "🔬 " + r.name;
+        const meta = document.getElementById("rankMeta");
+        meta.textContent = next
+          ? ("観測済み " + n + " / " + total + " 検体　（あと " + (next.min - n) + " 体で「" + next.name + "」）")
+          : ("観測済み " + n + " / " + total + " 検体　全検体を制覇しました。");
+        document.getElementById("rankBar").style.width = Math.round((n / total) * 100) + "%";
+        const badges = document.getElementById("rankBadges");
+        badges.textContent = "";
+        const sealedSeen = seen.indexOf("sealed") !== -1;
+        [
+          { on:n >= 1,     label:"初観測" },
+          { on:n >= 6,     label:"半数到達" },
+          { on:n >= total, label:"全検体制覇" },
+          { on:sealedSeen, label:"封印検体目撃者" }
+        ].forEach(function(b){
+          badges.appendChild(el("span", "rankBadge" + (b.on ? "" : " locked"), b.on ? b.label : "？？？"));
+        });
+      }
+
+      /* ===== 関連する生命現象 ===== */
+      function relatedFor(v){
+        const tags = v.tags || [];
+        return VIDS
+          .filter(function(x){ return x.id !== v.id; })
+          .map(function(x){ return { v:x, score:(x.tags || []).filter(function(t){ return tags.indexOf(t) !== -1; }).length }; })
+          .sort(function(a, b){ return b.score - a.score; })
+          .slice(0, 3)
+          .map(function(o){ return o.v; });
+      }
+      function renderRelated(v){
+        const box = document.getElementById("relatedBox");
+        const gridR = document.getElementById("relatedGrid");
+        gridR.textContent = "";
+        if(v.sealed){ box.style.display = "none"; return; }
+        box.style.display = "";
+        relatedFor(v).forEach(function(r){
+          const c = el("div", "relCard");
+          c.dataset.id = r.id;
+          const rt = el("div", "rt");
+          const img = document.createElement("img");
+          img.src = r.img || PLACEHOLDER; img.alt = r.title; img.loading = "lazy";
+          img.addEventListener("error", function(){ img.src = PLACEHOLDER; }, {once:true});
+          rt.appendChild(img);
+          rt.appendChild(el("div", "rd", r.dur));
+          c.appendChild(rt);
+          c.appendChild(el("div", "rtitle", r.title));
+          c.addEventListener("click", function(){ openModal(r, false); });
+          gridR.appendChild(c);
+        });
+      }
+
+      /* ===== 培養日誌（コメント・端末ローカル） ===== */
+      const CMT_KEY = "r122_comments";
+      const CMT_POOL = [
+        { name:"ATP_addict99",      text:"何回見てもクリステの折り畳みが良すぎる…" },
+        { name:"膜タンパクP",        text:"ここのシナプス、教科書の図より分かりやすい" },
+        { name:"巫女みこ細胞",       text:"増殖の瞬間でガチで鳥肌立った" },
+        { name:"Golgi_body",        text:"保存した。明日も観る。" },
+        { name:"名無しの培養者",     text:"は？天才かよこの構造" },
+        { name:"電子顕microフェチ",  text:"解像度が良すぎて逆に不安になる" },
+        { name:"減数分裂P",          text:"これはもう芸術の域" },
+        { name:"liposome_24",       text:"通報しました（褒め言葉）" },
+        { name:"ヌクレオチド中毒",   text:"序盤の塩基対のところが好き" }
+      ];
+      function hashStr(s){ let h = 0; for(let i = 0; i < s.length; i++){ h = (h * 31 + s.charCodeAt(i)) | 0; } return Math.abs(h); }
+      function presetComments(v){
+        const h = hashStr(v.id);
+        const n = 2 + (h % 2);
+        const out = [];
+        for(let i = 0; i < n; i++){ out.push(CMT_POOL[(h + i * 3) % CMT_POOL.length]); }
+        return out;
+      }
+      function loadComments(){ try{ return JSON.parse(localStorage.getItem(CMT_KEY) || "{}"); }catch(_){ return {}; } }
+      function saveComments(obj){ try{ localStorage.setItem(CMT_KEY, JSON.stringify(obj)); }catch(_){} }
+      function userComments(id){ const all = loadComments(); return Array.isArray(all[id]) ? all[id] : []; }
+      function commentItem(name, text, time, mine){
+        const li = el("li", "cItem" + (mine ? " mine" : ""));
+        const top = el("div", "cTop");
+        top.appendChild(el("span", "cName" + (mine ? "" : " guest"), name));
+        if(mine) top.appendChild(el("span", "cMine", "自分"));
+        if(time) top.appendChild(el("span", "cTime", time));
+        li.appendChild(top);
+        li.appendChild(el("div", "cText", text));
+        return li;
+      }
+      function renderComments(v){
+        const list = document.getElementById("cList");
+        const count = document.getElementById("cCount");
+        list.textContent = "";
+        const presets = v.sealed ? [{ name:"[REDACTED]", text:"…（この検体へのコメントは検閲されています）" }] : presetComments(v);
+        const mine = userComments(v.id);
+        count.textContent = "（" + (presets.length + mine.length) + "）";
+        presets.forEach(function(c){ list.appendChild(commentItem(c.name, c.text, "", false)); });
+        mine.forEach(function(c){ list.appendChild(commentItem(c.name || "あなた", c.text, fmtAgo(c.t), true)); });
+        document.getElementById("cText").value = "";
+      }
+      function postComment(){
+        if(!lastOpened) return;
+        const nameEl = document.getElementById("cName");
+        const textEl = document.getElementById("cText");
+        const text = (textEl.value || "").trim();
+        if(!text){ toast("観測メモを入力してください。"); textEl.focus(); return; }
+        const all = loadComments();
+        const id = lastOpened.id;
+        if(!Array.isArray(all[id])) all[id] = [];
+        all[id].unshift({ name:(nameEl.value || "").trim().slice(0, 20), text:text.slice(0, 140), t:Date.now() });
+        all[id] = all[id].slice(0, 30);
+        saveComments(all);
+        renderComments(lastOpened);
+        toast("培養日誌に記録しました。");
+      }
+      document.getElementById("cSubmit").addEventListener("click", postComment);
+
+      /* ===== 本日の検体（日付シード） ===== */
+      function dateSeed(){ const d = new Date(); return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate(); }
+      function initDaily(){
+        const v = VIDS[dateSeed() % VIDS.length];
+        const box = document.getElementById("dailyPick");
+        const img = document.getElementById("dailyImg");
+        img.src = v.img || PLACEHOLDER; img.alt = v.title;
+        img.addEventListener("error", function(){ img.src = PLACEHOLDER; }, {once:true});
+        document.getElementById("dailyTitle").textContent = v.title;
+        document.getElementById("dailySub").textContent = v.sub;
+        function go(){ openModal(v, false); }
+        box.addEventListener("click", go);
+        box.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); go(); } });
+      }
+
+      /* ===== LIVE 培養中継 ===== */
+      function initLive(){
+        const strip = document.getElementById("liveStrip");
+        const nowEl = document.getElementById("liveNow");
+        const viewersEl = document.getElementById("liveViewers");
+        let current = VIDS[Math.floor(Math.random() * VIDS.length)];
+        let viewers = 800 + Math.floor(Math.random() * 900);
+        function paint(){
+          nowEl.textContent = "現在「" + current.title + "」を培養中…";
+          viewersEl.innerHTML = "👁 <b>" + viewers.toLocaleString() + "</b> 体が同時観測中";
+        }
+        paint();
+        setInterval(function(){
+          viewers += Math.floor(Math.random() * 41) - 18;
+          if(viewers < 120) viewers = 120 + Math.floor(Math.random() * 40);
+          paint();
+        }, 2600);
+        setInterval(function(){ current = VIDS[Math.floor(Math.random() * VIDS.length)]; paint(); }, 7000);
+        function go(){ toast("🔴 培養中継に接続…"); openModal(current, false); }
+        strip.addEventListener("click", go);
+        strip.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); go(); } });
+      }
+
+      /* ===== 偽バナー広告（1枚・消せる） ===== */
+      const AD_POOL = [
+        "近所の<b>ミトコンドリア</b>があなたとの分裂を待っています！今すぐ培養",
+        "驚異の<b>ATP産生</b>！この葉緑体は1日で糖を量産すると専門家も困惑",
+        "【衝撃】たった1回の<b>有糸分裂</b>で細胞が2倍に！？知らないと損",
+        "あなたの<b>テロメア</b>、短くなっていませんか？今なら無料観測",
+        "独身<b>酵素</b>が基質を募集中。活性部位はあなたを待っています"
+      ];
+      function initAd(){
+        if(sessionStorage.getItem("r122_ad_closed") === "1") return;
+        const ad = document.getElementById("adBanner");
+        document.getElementById("adText").innerHTML = AD_POOL[Math.floor(Math.random() * AD_POOL.length)];
+        ad.hidden = false;
+        document.getElementById("adClose").addEventListener("click", function(){
+          ad.hidden = true;
+          try{ sessionStorage.setItem("r122_ad_closed", "1"); }catch(_){}
+          toast("広告をブロックしました。（培養槽は安全です）");
+        });
+      }
+
+      // Escapeでアカウントも閉じる
+      document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeAcct(); });
+
+      renderChips();
+      renderCards();
+      initDaily();
+      initLive();
+      initAd();
+
+      try{
+        if(localStorage.getItem(LS_KEY) === "1"){
+          gate.style.display = "none";
+          site.classList.add("show");
+        }
+      }catch(_){}
+    })();
+  </script>
+</body>
+</html>

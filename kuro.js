@@ -1,0 +1,345 @@
+// kuro.js（$衝突回避：byId を使う）
+(() => {
+  "use strict";
+
+// NOTE: 黒歴史は「コナミコマンド解錠」時だけ表示する（直打ち対策）
+  const KURO_UNLOCK_KEY = "kuro_unlocked_v1";
+  if (sessionStorage.getItem(KURO_UNLOCK_KEY) !== "1") {
+    document.addEventListener("DOMContentLoaded", () => {
+      const main = document.querySelector("main.wrap") || document.body;
+      if (main) {
+        main.innerHTML = `
+          <section class="hero">
+            <h1 class="h1">黒歴史（封印）</h1>
+            <p class="sub">ここは封印されている。<br>入口は <b>コナミコマンド</b> のみ（↑↑↓↓←→←→BA）。</p>
+            <div class="btnrow">
+              <a class="btn primary" href="index.html">戻る</a>
+            </div>
+          </section>
+        `;
+      }
+    });
+    return;
+  }
+
+  const KURO_ENTRIES = [
+    {
+      id: "k-gintama-001",
+      title: "銀魂：銀さんのコスプレ（3000円＋実家の木刀）",
+      date: "2019-??-??",
+      tags: ["コスプレ", "銀魂", "写真", "黒歴史"],
+      level: 3,
+      summary: "銀魂の銀さんのコスプレです。3000円＋実家の木刀でなりきりました。頭がおかしかった時期です。おいィィィ",
+      body: `
+        <figure style="margin:0">
+          <img
+            src="img/kuro/ginsan.JPG"
+            alt="銀さんコスプレ写真"
+            style="max-width:100%;height:auto;border-radius:14px;border:1px solid rgba(255,255,255,.12)"
+            onerror="this.onerror=null; this.src='img/logo.png';"
+            loading="lazy"
+          >
+          <figcaption class="note" style="margin-top:8px">
+            銀魂の銀さんのコスプレです。3000円＋実家の木刀でなりきりました。
+          </figcaption>
+        </figure>
+
+        <p style="margin-top:12px">
+          頭がおかしかった時期です。
+        </p>
+
+        <blockquote>おいィィィ</blockquote>
+      `,
+      link: ""
+    },
+
+    {
+      id: "k-conf-001",
+      title: "機密データ：世界観ログ／プロット／ステータス（PDF）",
+      date: "2026-02-22",
+      tags: ["機密", "設定", "プロット", "PDF"],
+      level: 3,
+      summary: "世界観の根幹資料。公開してるけど、いちおう封印庫に保管。",
+      body: `
+        <p>
+          いわゆる“機密データ”。（※現実の個人情報・住所などは入れない）
+        </p>
+        <p class="note">📁 世界観コア</p>
+        <ul>
+          <li><a class="btn" href="kuro_data/16章_各50話_細目プロット_7000字想定.pdf" target="_blank" rel="noopener noreferrer">16章×各50話：細目プロット（PDF）</a></li>
+          <li><a class="btn" href="kuro_data/シナリオ.pdf" target="_blank" rel="noopener noreferrer">シナリオ（PDF）</a></li>
+          <li><a class="btn" href="kuro_data/ステータス表示（完全統合サンプル）.pdf" target="_blank" rel="noopener noreferrer">ステータス表示（完全統合サンプル）（PDF）</a></li>
+          <li><a class="btn" href="kuro_data/ルーメン結論記録（抄）.pdf" target="_blank" rel="noopener noreferrer">ルーメン結論記録（抄）（PDF）</a></li>
+          <li><a class="btn" href="kuro_data/人間.pdf" target="_blank" rel="noopener noreferrer">人間（定義文書）（PDF）</a></li>
+          <li><a class="btn" href="kuro_data/経済.pdf" target="_blank" rel="noopener noreferrer">経済（PDF）</a></li>
+          <li><a class="btn" href="kuro_data/進化の過程.pdf" target="_blank" rel="noopener noreferrer">進化の過程（観測記録）（PDF）</a></li>
+        </ul>
+        <p class="note">📁 人物档案</p>
+        <ul>
+          <li><a class="btn" href="kuro_data/佐藤雄二 生い立ちアーカイブ.pdf" target="_blank" rel="noopener noreferrer">佐藤雄二：生い立ちアーカイブ（PDF）</a></li>
+        </ul>
+        <p class="note">📁 供養・雑記</p>
+        <ul>
+          <li><a class="btn" href="kuro_data/案.pdf" target="_blank" rel="noopener noreferrer">案（PDF）</a></li>
+          <li><a class="btn" href="kuro_data/ラノベあるある。.pdf" target="_blank" rel="noopener noreferrer">ラノベあるある。（PDF）</a></li>
+        </ul>
+        <p class="note">
+          追加したいPDFが増えたら <code>kuro_data/</code> に置いて、このエントリにリンクを足せばOK。
+        </p>
+      `,
+      link: ""
+    },
+
+    // ---- 以下はサンプル（消してもOK） ----
+    {
+      id: "k2026-001",
+      title: "黒歴史ページの初期サンプル",
+      date: "2026-02-20",
+      tags: ["ページ", "設計"],
+      level: 1,
+      summary: "供養庫の雛形。検索・タグ・封印解除が動くかの確認用。",
+      body: `
+        <p>これはサンプル。<b>kuro.js の KURO_ENTRIES</b> に追加していけば増える。</p>
+        <ul>
+          <li>タグで絞り込み</li>
+          <li>検索（タイトル/要約/本文）</li>
+          <li>封印（ぼかし）ON/OFF</li>
+        </ul>
+      `,
+      link: ""
+    },
+    {
+      id: "k2026-002",
+      title: "没案：タイトルだけ強いが中身が無い",
+      date: "2026-02-18",
+      tags: ["没案", "文章"],
+      level: 2,
+      summary: "勢いで付けたタイトルがピークだったやつ。",
+      body: `
+        <p>本文ここに書く。長文でもOK。HTMLをそのまま入れられる。</p>
+        <p class="note">※ script は入れない（安全＆事故防止）</p>
+      `,
+      link: ""
+    }
+  ];
+
+  // ===== utilities =====
+  const byId = (id) => document.getElementById(id);
+
+  function norm(s) {
+    return (s || "").trim().replace(/\s+/g, " ");
+  }
+  function uniq(arr) {
+    return Array.from(new Set(arr));
+  }
+  function escapeHtml(s) {
+    return String(s ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll("\"", "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+  function escapeAttr(s) {
+    return escapeHtml(s).replaceAll("`", "&#96;");
+  }
+  function toText(html) {
+    const div = document.createElement("div");
+    div.innerHTML = html || "";
+    return (div.textContent || "").toLowerCase();
+  }
+  function stripScripts(html) {
+    const div = document.createElement("div");
+    div.innerHTML = html || "";
+    div.querySelectorAll("script").forEach(n => n.remove());
+    return div.innerHTML;
+  }
+  function levelLabel(level) {
+    const lv = Number(level || 1);
+    if (lv >= 3) return "危険度:III";
+    if (lv === 2) return "危険度:II";
+    return "危険度:I";
+  }
+
+  // ===== seal (blur) =====
+  const LS_SEAL = "kuro_seal_off"; // "1" なら封印解除
+
+  function isSealOff() {
+    return localStorage.getItem(LS_SEAL) === "1";
+  }
+  function setSealOff(v) {
+    localStorage.setItem(LS_SEAL, v ? "1" : "0");
+  }
+  function applySealUI() {
+    const wrap = byId("kuroListWrap");
+    const bar = byId("sealBar");
+    const btn = byId("kuroToggleSeal");
+    if (!wrap) return;
+
+    const off = isSealOff();
+    if (off) {
+      wrap.classList.remove("sealed");
+      if (bar) bar.style.display = "none";
+      if (btn) btn.textContent = "封印を戻す";
+    } else {
+      wrap.classList.add("sealed");
+      if (bar) bar.style.display = "flex";
+      if (btn) btn.textContent = "封印を解く";
+    }
+  }
+
+  // ===== render =====
+  function renderTags(allTags, active) {
+    const wrap = byId("kuroTags");
+    if (!wrap) return;
+
+    wrap.innerHTML = "";
+    const tags = ["全部", ...allTags];
+
+    tags.forEach(t => {
+      const btn = document.createElement("button");
+      const isOn = (t === "全部" && active.size === 0) || active.has(t);
+      btn.className = "tagBtn" + (isOn ? " on" : "");
+      btn.type = "button";
+      btn.textContent = t;
+
+      btn.addEventListener("click", () => {
+        if (t === "全部") {
+          active.clear();
+        } else {
+          if (active.has(t)) active.delete(t);
+          else active.add(t);
+        }
+        update(active);
+        renderTags(allTags, active);
+      });
+
+      wrap.appendChild(btn);
+    });
+  }
+
+  function renderList(list) {
+    const out = byId("kuroList");
+    if (!out) return;
+
+    out.innerHTML = "";
+
+    if (list.length === 0) {
+      out.innerHTML = `<p class="note">該当なし。</p>`;
+      return;
+    }
+
+    list.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.style.padding = "14px";
+      card.style.marginBottom = "12px";
+
+      const tagsHtml = (item.tags || [])
+        .map(t => `<span class="miniTag">${escapeHtml(t)}</span>`)
+        .join("");
+
+      const linkHtml = item.link
+        ? `<div style="margin-top:10px"><a class="btn" href="${escapeAttr(item.link)}">関連リンク</a></div>`
+        : "";
+
+      const safeBody = stripScripts(item.body || "");
+
+      card.innerHTML = `
+        <div class="kuroHead">
+          <div>
+            <h3 class="kuroTitle">${escapeHtml(item.title)}</h3>
+            <div class="kuroMeta">${escapeHtml(item.date || "")} ・ ${levelLabel(item.level)}</div>
+            <div class="miniTags">${tagsHtml}</div>
+          </div>
+        </div>
+
+        <p class="kuroSummary">${escapeHtml(item.summary || "")}</p>
+
+        <details style="margin-top:10px">
+          <summary style="cursor:pointer; opacity:.9">本文を開く</summary>
+          <div class="kuroBody">${safeBody}</div>
+          ${linkHtml}
+        </details>
+      `;
+
+      out.appendChild(card);
+    });
+  }
+
+  function update(activeTags) {
+    const qEl = byId("kuroQuery");
+    const sortEl = byId("kuroSort");
+    const countEl = byId("kuroCount");
+
+    const q = norm(qEl ? qEl.value : "").toLowerCase();
+    const sort = sortEl ? sortEl.value : "new";
+
+    let list = KURO_ENTRIES.slice();
+
+    if (activeTags && activeTags.size > 0) {
+      list = list.filter(x => (x.tags || []).some(t => activeTags.has(t)));
+    }
+
+    if (q) {
+      list = list.filter(x => {
+        const hay = [
+          (x.title || "").toLowerCase(),
+          (x.summary || "").toLowerCase(),
+          toText(x.body || "")
+        ].join("\n");
+        return hay.includes(q);
+      });
+    }
+
+    if (sort === "old") {
+      list.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+    } else if (sort === "title") {
+      list.sort((a, b) => String(a.title || "").localeCompare(String(b.title || "")));
+    } else {
+      list.sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+    }
+
+    renderList(list);
+
+    if (countEl) {
+      countEl.textContent = `表示 ${list.length} / 全 ${KURO_ENTRIES.length}`;
+    }
+
+    applySealUI();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const allTags = uniq(KURO_ENTRIES.flatMap(x => x.tags || []))
+      .sort((a, b) => a.localeCompare(b));
+
+    const active = new Set();
+
+    renderTags(allTags, active);
+    update(active);
+
+    byId("kuroQuery")?.addEventListener("input", () => update(active));
+    byId("kuroSort")?.addEventListener("change", () => update(active));
+
+    byId("kuroClear")?.addEventListener("click", () => {
+      const q = byId("kuroQuery");
+      const s = byId("kuroSort");
+      if (q) q.value = "";
+      if (s) s.value = "new";
+      active.clear();
+      renderTags(allTags, active);
+      update(active);
+    });
+
+    byId("kuroToggleSeal")?.addEventListener("click", () => {
+      const before = isSealOff();
+      setSealOff(!before);
+      applySealUI();
+      // 「封印を解く」時だけ鳴らす
+      if(!before){
+        try{ if(window.playSfx) window.playSfx("sealUnlock", 1.0, {boost: 2.8}); }catch(e){}
+      }
+    });
+  });
+
+})();

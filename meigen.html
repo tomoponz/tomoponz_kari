@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'self' https://api.counterapi.dev; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <title>tomoponz｜名言集</title>
+  <meta name="description" content="名言・迷言・決め台詞を検索/ランダム表示できるページ">
+
+  <!-- ★更新時は v= の数字を変える（キャッシュ対策） -->
+  <link rel="stylesheet" href="style.css?v=20260612">
+
+  <style>
+    .wrap{max-width:1080px;margin:0 auto;padding:18px}
+    .hero{padding:18px;border:1px solid rgba(255,255,255,.10);border-radius:18px;background:rgba(255,255,255,.03)}
+    .h1{font-size:28px;letter-spacing:.5px}
+    .sub{color:rgba(234,241,255,.75)}
+    .grid2{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+    @media (min-width:980px){.grid2{grid-template-columns:1.2fr .8fr}}
+    .card{padding:16px;border:1px solid rgba(255,255,255,.10);border-radius:18px;background:rgba(255,255,255,.03)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    input,select,button,.btn{
+      border-radius:14px;border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.18);color:inherit;padding:10px 12px
+    }
+    button,.btn{cursor:pointer}
+    .btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+    .pill{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);color:rgba(234,241,255,.78)}
+    .quoteBox{
+      border-radius:18px;border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.22);padding:14px
+    }
+    .quoteText{font-size:18px;line-height:1.7;white-space:pre-wrap}
+    .quoteMeta{margin-top:10px;color:rgba(234,241,255,.78);display:flex;gap:8px;flex-wrap:wrap}
+    .muted{color:rgba(234,241,255,.65)}
+    .list{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+    .qItem{
+      padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);cursor:pointer
+    }
+    .qItem:hover{background:rgba(255,255,255,.06)}
+    .qSmall{font-size:14px;line-height:1.6;white-space:pre-wrap}
+    .qSmallMeta{margin-top:6px;font-size:12px;color:rgba(234,241,255,.70);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+    .footer{margin-top:18px;color:rgba(234,241,255,.55);font-size:12px;text-align:center}
+  </style>
+  <script defer src="assets/js/site-search.js?v=20260612"></script>
+  <script defer src="app.js?v=20260612"></script>
+</head>
+
+<body>
+  <header class="nav">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <b>tomoponz</b><br><small>名言集</small>
+      </div>
+    </div>
+
+    <nav class="navlinks">
+      <a class="chip" href="index.html">プロフィール</a>
+      <a class="chip" href="omikuji.html">おみくじ</a>
+      <a class="chip" href="shindan.html">診断</a>
+      <a class="chip" href="gallery.html">ネタ置き場</a>
+      <a class="chip" href="links.html">リンク</a>
+      <a class="chip" href="games.html">ゲーム</a>
+      <a class="chip" href="door.html">ドア</a>
+      <a class="chip" href="hachi.html">八百科事典</a>
+      <a class="chip" href="warp.html">Warp</a>
+      <a class="chip" href="meigen.html" aria-current="page">名言集</a>
+    
+      <a class="chip" href="staff.html">スタッフロール</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1 class="h1" style="margin:0 0 6px">名言集</h1>
+      <p class="sub" style="margin:0 0 12px">検索 / 作品フィルタ / タグフィルタ / ランダム / コピー対応</p>
+
+      <div class="row">
+        <input id="qSearch" type="search" placeholder="検索（セリフ / キャラ / 作品）" style="min-width:260px;flex:1">
+        <select id="qWork">
+          <option value="">作品：すべて</option>
+        </select>
+        <select id="qTag">
+          <option value="">タグ：すべて</option>
+        </select>
+        <button id="btnRandom">ランダム</button>
+        <button id="btnCopy">コピー</button>
+        <span class="pill" id="countPill">0件</span>
+      </div>
+    </section>
+
+    <section class="grid2">
+      <div class="card">
+        <h2 style="margin:0 0 10px">スポットライト</h2>
+        <div class="quoteBox">
+          <div class="quoteText" id="spotText">読み込み中…</div>
+          <div class="quoteMeta" id="spotMeta"></div>
+        </div>
+        <p class="muted" style="margin:10px 0 0">※ 下のリストからクリックして切り替え可能</p>
+      </div>
+
+      <div class="card">
+        <h2 style="margin:0 0 10px">一覧</h2>
+        <ul class="list" id="qList"></ul>
+      </div>
+    </section>
+
+    <div class="footer">© tomoponz / Meigen</div>
+  </main>
+
+  <!-- ✅ 読み込み順を固定（ここ重要） -->
+  <script src="quotes_base.js?v=20260223"></script>
+  <script src="user_quotes.js?v=20260223"></script>
+
+  <script>
+    // BASE（共通）
+    const BASE_QUOTES = Array.isArray(window.BASE_QUOTES) ? window.BASE_QUOTES : [];
+
+    // USER（追加分）
+    function normalizeUserQuote(q){
+      if(!q || !q.text) return null;
+      const work = q.work || "User";
+      const character = q.character || q.author || "tomoponz";
+      const tags = Array.isArray(q.tags) ? q.tags : [];
+      return { text: String(q.text), work: String(work), character: String(character), tags };
+    }
+
+    const USER_QUOTES = Array.isArray(window.USER_QUOTES)
+      ? window.USER_QUOTES.map(normalizeUserQuote).filter(Boolean)
+      : [];
+
+    const QUOTES = [...BASE_QUOTES, ...USER_QUOTES];
+
+    // UI
+    const elSearch = document.getElementById('qSearch');
+    const elWork = document.getElementById('qWork');
+    const elTag = document.getElementById('qTag');
+    const elList = document.getElementById('qList');
+    const elSpotText = document.getElementById('spotText');
+    const elSpotMeta = document.getElementById('spotMeta');
+    const elCount = document.getElementById('countPill');
+    const btnRandom = document.getElementById('btnRandom');
+    const btnCopy = document.getElementById('btnCopy');
+
+    let spotlight = null;
+
+    function uniq(arr){ return [...new Set(arr)].filter(Boolean); }
+
+    function buildFilters(){
+      [...elWork.querySelectorAll('option')].slice(1).forEach(x=>x.remove());
+      [...elTag.querySelectorAll('option')].slice(1).forEach(x=>x.remove());
+
+      const works = uniq(QUOTES.map(q=>q.work)).sort((a,b)=>a.localeCompare(b,'ja'));
+      works.forEach(w=>{
+        const opt = document.createElement('option');
+        opt.value = w; opt.textContent = `作品：${w}`;
+        elWork.appendChild(opt);
+      });
+
+      const tags = uniq(QUOTES.flatMap(q=>q.tags||[])).sort((a,b)=>a.localeCompare(b,'ja'));
+      tags.forEach(t=>{
+        const opt = document.createElement('option');
+        opt.value = t; opt.textContent = `タグ：${t}`;
+        elTag.appendChild(opt);
+      });
+    }
+
+    function matches(q, kw){
+      if(!kw) return true;
+      const s = kw.trim().toLowerCase();
+      const hay = `${q.text} ${q.work} ${q.character} ${(q.tags||[]).join(' ')}`.toLowerCase();
+      return hay.includes(s);
+    }
+
+    function filtered(){
+      const kw = elSearch.value || '';
+      const w = elWork.value || '';
+      const t = elTag.value || '';
+      return QUOTES.filter(q=>{
+        if(w && q.work !== w) return false;
+        if(t && !(q.tags||[]).includes(t)) return false;
+        return matches(q, kw);
+      });
+    }
+
+    function setSpot(q){
+      if(!q) return;
+      spotlight = q;
+      elSpotText.textContent = q.text;
+      elSpotMeta.innerHTML = '';
+
+      const items = [
+        {label:`作品`, value:q.work},
+        {label:`人物`, value:q.character},
+        ...(q.tags||[]).map(x=>({label:`タグ`, value:x}))
+      ];
+
+      items.forEach(it=>{
+        const span = document.createElement('span');
+        span.className = 'pill';
+        span.textContent = `${it.label}：${it.value}`;
+        elSpotMeta.appendChild(span);
+      });
+    }
+
+    function escapeHtml(str){
+      return (str||'').replace(/[&<>"']/g, m => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[m]));
+    }
+
+    function render(){
+      const list = filtered();
+      elCount.textContent = `${list.length}件`;
+      elList.innerHTML = '';
+
+      list.slice(0, 80).forEach((q)=>{
+        const li = document.createElement('li');
+        li.className = 'qItem';
+        li.innerHTML = `
+          <div class="qSmall">${escapeHtml(q.text)}</div>
+          <div class="qSmallMeta">
+            <span>【${escapeHtml(q.work)}】</span>
+            <span>${escapeHtml(q.character)}</span>
+            ${(q.tags||[]).slice(0,4).map(t=>`<span class="pill">${escapeHtml(t)}</span>`).join('')}
+          </div>
+        `;
+        li.addEventListener('click', ()=>setSpot(q));
+        elList.appendChild(li);
+      });
+
+      if(!spotlight) setSpot(list[0] || QUOTES[0]);
+    }
+
+    function randomPick(){
+      const list = filtered();
+      if(list.length === 0) return null;
+      return list[Math.floor(Math.random()*list.length)];
+    }
+
+    async function copySpot(){
+      if(!spotlight) return;
+      const txt = `「${spotlight.text}」\n— ${spotlight.character}（${spotlight.work}）`;
+
+      try{
+        await navigator.clipboard.writeText(txt);
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = txt;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try{ document.execCommand('copy'); }catch(_){}
+        document.body.removeChild(ta);
+      }
+
+      btnCopy.textContent = 'コピー済み';
+      setTimeout(()=>btnCopy.textContent='コピー', 900);
+    }
+
+    function init(){
+      buildFilters();
+      render();
+
+      elSearch.addEventListener('input', render);
+      elWork.addEventListener('change', render);
+      elTag.addEventListener('change', render);
+
+      btnRandom.addEventListener('click', ()=>{
+        const q = randomPick();
+        if(q) setSpot(q);
+      });
+
+      btnCopy.addEventListener('click', copySpot);
+    }
+
+    // ✅ 他のJSがあっても最後に確実に動かす
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>

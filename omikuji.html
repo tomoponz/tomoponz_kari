@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="21種類：毒舌93.99% / ちょい良い5% / ???1% / ???0.01%" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'self' https://api.counterapi.dev; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <title>tomoponz｜おみくじ</title>
+  <meta name="description" content="11種類：毒舌93.99% / ちょい良い5% / ???1% / ???0.01%">
+  <link rel="stylesheet" href="style.css?v=20260612">
+  <script defer src="assets/js/site-search.js?v=20260612"></script>
+  <script defer src="app.js?v=20260612"></script>
+</head>
+<body class="page-omikuji">
+  <header class="nav">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <b>tomoponz</b><br><small>おみくじの間</small>
+      </div>
+    </div>
+
+    <nav class="navlinks">
+      <a class="chip" href="index.html">プロフィール</a>
+      <a class="chip" href="omikuji.html">おみくじ</a>
+      <a class="chip" href="shindan.html">診断</a>
+      <a class="chip" href="gallery.html">ネタ置き場</a>
+      <a class="chip" href="links.html">リンク</a>
+      <a class="chip" href="games.html">ゲーム</a>
+      <a class="chip" href="door.html">ドア</a>
+      <a class="chip" href="hachi.html">八百科事典</a>
+      
+      <div class="nav-search">
+        <input type="search" id="searchInput" placeholder="検索キーワードを入力してください" autocomplete="off">
+        <button id="searchBtn">検索</button>
+      </div>
+      
+      <a class="chip" href="staff.html">スタッフロール</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1 class="h1">おみくじ</h1>
+      <p class="sub">二十一種あり。毒舌多し（九割超）。されど稀に奇跡、降りる。</p>
+      <div class="btnrow">
+        <button onclick="drawOmikuji()">おみくじを引く</button>
+        <button onclick="resetOmikuji()">リセット</button>
+        <a class="btn" href="index.html">戻る</a>
+      </div>
+    </section>
+
+    <section class="grid2">
+      <div class="card">
+        <h2>結果</h2>
+        <div id="omikujiBox" style="display:none">
+          <div class="pill rank" id="omikujiRank"></div>
+          <p class="muted" id="omikujiMsg" style="margin:10px 0 0"></p>
+          <p class="muted" id="omikujiTips" style="margin:6px 0 0"></p>
+        </div>
+        <div class="note" style="margin-top:12px">
+          ※同じ日に引けば、同じ結果なり。<br>
+          変えたければ「リセット」すべし。
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>確率</h2>
+        <ul class="list">
+          <li>毒舌：18種類（合計 93.99%）</li>
+          <li>ちと佳し：1種類（5%）</li>
+          <li>？？？：1種類（1%）</li>
+          <li>？？？：1種類（0.01%）</li>
+        </ul>
+        <hr class="sep">
+        <p class="muted">信じるか信じないかは、あなた次第です。</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

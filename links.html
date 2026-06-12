@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://i.ytimg.com; media-src 'self'; connect-src 'self' https://api.counterapi.dev; frame-src 'self' https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <title>tomoponz｜リンク</title>
+  <meta name="description" content="SNSや外部リンク（公開したいものだけ）">
+  <link rel="stylesheet" href="style.css?v=20260612">
+  <script defer src="assets/js/site-search.js?v=20260612"></script>
+  <script defer src="app.js?v=20260612"></script>
+
+  <style>
+    .ytThumb{
+      display:block;
+      position:relative;
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      box-shadow: 0 16px 60px rgba(0,0,0,.22);
+      text-decoration:none;
+      color: inherit;
+    }
+    .ytThumb img{
+      width:100%;
+      height:auto;
+      display:block;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      filter: saturate(1.05);
+    }
+    .ytThumb::after{
+      content:"▶";
+      position:absolute;
+      left: 14px;
+      bottom: 12px;
+      width: 44px;
+      height: 44px;
+      display:grid;
+      place-items:center;
+      border-radius: 999px;
+      background: rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 10px 25px rgba(0,0,0,.35);
+      font-weight: 900;
+      letter-spacing: .02em;
+    }
+    .ytMeta{
+      padding: 12px 14px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+    }
+    .ytMeta .t{
+      margin:0;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+    .ytMeta .s{
+      margin:6px 0 0;
+      opacity:.78;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+  </style>
+
+  <style>
+    .ytPlayerWrap{
+      margin-top: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      background: rgba(0,0,0,.22);
+      padding: 12px;
+    }
+    .ytPlayerTop{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom: 10px;
+    }
+    .ytPlayerBox{
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 14px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.35);
+    }
+    .ytPlayerBox iframe{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      border:0;
+    }
+  </style>
+
+</head>
+<body>
+  <header class="nav">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <b>tomoponz</b><br><small>リンクの間</small>
+      </div>
+    </div>
+
+    <nav class="navlinks">
+      <a class="chip" href="index.html">プロフィール</a>
+      <a class="chip" href="omikuji.html">おみくじ</a>
+      <a class="chip" href="shindan.html">診断</a>
+      <a class="chip" href="gallery.html">ネタ置き場</a>
+      <a class="chip" href="links.html">リンク</a>
+      <a class="chip" href="games.html">ゲーム</a>
+      <a class="chip" href="door.html">ドア</a>
+      <a class="chip" href="hachi.html">八百科事典</a>
+
+      <div class="nav-search">
+        <input type="search" id="searchInput" placeholder="検索キーワードを入力してください" autocomplete="off">
+        <button id="searchBtn">検索</button>
+      </div>
+
+      <a class="chip" href="staff.html">スタッフロール</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1 class="h1">リンク</h1>
+      <p class="sub">公開したいものだけ貼る。メールは晒さないのが安全。</p>
+    </section>
+
+    <section class="grid2">
+      <div class="card">
+        <h2>X（Twitter）</h2>
+        <p class="muted">プロフ：ここから飛べる。</p>
+        <div class="btnrow">
+          <a class="btn primary" href="https://x.com/FiKprHknWifJ5Sb" target="_blank" rel="noopener noreferrer">Xプロフィールを開く</a>
+        </div>
+        <hr class="sep">
+        <div class="note devOnly">
+          固定ポストに「自己紹介＋このサイトURL」を置くと、友達導線が最短になる。
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>YouTube</h2>
+        <p class="muted">いま聴いてる曲＆プレイリスト。</p>
+
+        <!-- ✅ Now Playing のサムネ（自動生成） -->
+        <a class="ytThumb" id="nowPlayingThumb" href="https://youtu.be/WUlMjK_VKhA" target="_blank" rel="noopener noreferrer">
+          <img id="nowPlayingImg" src="" alt="Now Playing thumbnail">
+          <div class="ytMeta">
+            <p class="t">Now Playing</p>
+            <p class="s" id="nowPlayingSub">YouTubeリンクからサムネ生成</p>
+          </div>
+        </a>
+
+        <!-- ▶ ページ内再生（外部に飛ばない） -->
+        <div class="ytPlayerWrap" id="ytPlayerWrap" hidden>
+          <div class="ytPlayerTop">
+            <b>Now Playing</b>
+            <button class="btnlike" id="ytCloseBtn" type="button">× 閉じる</button>
+          </div>
+          <div class="ytPlayerBox">
+            <iframe id="ytIframe" src="" title="YouTube player"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              allowfullscreen></iframe>
+          </div>
+          <div class="muted" style="margin-top:8px">
+            ※外部に飛ばずにこのページ内で再生します（YouTubeへ行きたい場合はボタンを使ってください）。
+          </div>
+        </div>
+
+        <div class="btnrow" style="margin-top:12px">
+          <a class="btn primary" id="nowPlayingLink" href="https://youtu.be/WUlMjK_VKhA" target="_blank" rel="noopener noreferrer">Now Playing（YouTube）</a>
+          <a class="btn" href="https://youtube.com/playlist?list=PL89MD5rmOuuJbpCYMMW8hB3rBRtNmq7lF" target="_blank" rel="noopener noreferrer">プレイリストを開く</a>
+          <a class="btn" href="gallery.html">埋め込みページへ</a>
+        </div>
+        <hr class="sep">
+      </div>
+
+      <!-- ✅ 追加：paprika-dream（Tokyo）への誘導 -->
+      <div class="card">
+        <h2>Paprika Dream</h2>
+        <p class="muted">「東京」セクションへ直行。</p>
+        <div class="btnrow">
+          <a class="btn primary" href="https://tomoponz.github.io/paprika-dream/index.html#tokyo" target="_blank" rel="noopener noreferrer">Paprika Dream｜Tokyoへ</a>
+          <a class="btn" href="https://tomoponz.github.io/paprika-dream/index.html" target="_blank" rel="noopener noreferrer">トップから開く</a>
+        </div>
+        <hr class="sep">
+        <div class="note devOnly">
+          導線目的：リンク集から「作品ページ」に一発で飛ばす。
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    // Now Playing のURLから動画IDを抜いてサムネURLを作る（API不要）
+    function getYouTubeId(url){
+      try{
+        const u = new URL(url);
+        const host = u.hostname.replace(/^www\./, "");
+        if(host === "youtu.be"){
+          const id = u.pathname.split("/").filter(Boolean)[0];
+          return id || "";
+        }
+        if(host.endsWith("youtube.com")){
+          if(u.pathname === "/watch") return u.searchParams.get("v") || "";
+          if(u.pathname.startsWith("/shorts/")) return u.pathname.split("/")[2] || "";
+          if(u.pathname.startsWith("/embed/")) return u.pathname.split("/")[2] || "";
+        }
+      }catch{}
+      return "";
+    }
+
+    function setNowPlayingThumb(){
+      const a = document.getElementById("nowPlayingLink");
+      const thumbA = document.getElementById("nowPlayingThumb");
+      const img = document.getElementById("nowPlayingImg");
+      const sub = document.getElementById("nowPlayingSub");
+      if(!a || !thumbA || !img) return;
+
+      // ボタンの href を正とする（ここを変えるだけでサムネも追従）
+      const href = a.getAttribute("href") || "";
+      const id = getYouTubeId(href);
+
+      thumbA.href = href;
+
+      if(!id){
+        img.alt = "Now Playing";
+        img.src = "";
+        img.style.display = "none";
+        if(sub) sub.textContent = "動画IDを取得できませんでした（URL形式を確認）";
+        return;
+      }
+
+      img.style.display = "block";
+      // 高画質 → 失敗したら自動で小さめに落とす
+      const primary = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+      const fallback = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+
+      img.src = primary;
+      img.onerror = () => { img.onerror = null; img.src = fallback; };
+      if(sub) sub.textContent = `video: ${id}`;
+    }
+
+    window.addEventListener("DOMContentLoaded", setNowPlayingThumb);
+
+    function openInlinePlayer(mode){
+      const wrap = document.getElementById("ytPlayerWrap");
+      const iframe = document.getElementById("ytIframe");
+      if(!wrap || !iframe) return;
+
+      const nowUrl = (document.getElementById("nowPlayingLink")||{}).href || "";
+      const listUrl = "https://youtube.com/playlist?list=PL89MD5rmOuuJbpCYMMW8hB3rBRtNmq7lF";
+
+      let src = "";
+      if(mode === "playlist"){
+        try{
+          const u = new URL(listUrl);
+          const list = u.searchParams.get("list") || "";
+          if(list) src = `https://www.youtube-nocookie.com/embed/videoseries?list=${encodeURIComponent(list)}&autoplay=1&rel=0`;
+        }catch(_){}
+      }else{
+        const id = getYouTubeId(nowUrl);
+        if(id) src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0`;
+      }
+
+      if(!src) return;
+      iframe.src = src;
+      wrap.hidden = false;
+      try{ wrap.scrollIntoView({behavior:"smooth", block:"start"}); }catch(_){}
+    }
+
+    function closeInlinePlayer(){
+      const wrap = document.getElementById("ytPlayerWrap");
+      const iframe = document.getElementById("ytIframe");
+      if(iframe) iframe.src = "";
+      if(wrap) wrap.hidden = true;
+    }
+
+    window.addEventListener("DOMContentLoaded", ()=>{
+      const thumb = document.getElementById("nowPlayingThumb");
+      const nowBtn = document.getElementById("nowPlayingLink");
+      const closeBtn = document.getElementById("ytCloseBtn");
+      const playlistBtn = Array.from(document.querySelectorAll('a.btn')).find(a=>a.textContent.includes("プレイリスト"));
+
+      function hijack(a, mode){
+        if(!a) return;
+        a.addEventListener("click", (ev)=>{
+          // shift/ctrl/ middle click is still external
+          if(ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.button === 1) return;
+          ev.preventDefault();
+          openInlinePlayer(mode);
+        });
+      }
+
+      hijack(thumb, "video");
+      hijack(nowBtn, "video");
+      hijack(playlistBtn, "playlist");
+
+      if(closeBtn) closeBtn.addEventListener("click", closeInlinePlayer);
+    });
+
+  </script>
+</body>
+</html>
