@@ -1,0 +1,102 @@
+/* ============================================================
+   skins.css — ページ別の個性付け
+   使い方：対象ページの <body> にクラスを付けて、このCSSを読み込む
+
+   - skin-pixel  : games.html   ドット/方眼レトロ（緑）
+   - skin-note   : bbs.html     足跡帳ノート（罫線＋記帳スタンプ）
+   - skin-museum : gallery.html 展示室（額装＋展示番号）
+
+   方針：背景・枠・見出しの差し色だけ。レイアウト(style.css)は
+   上書きしすぎず、読みやすさとスマホ表示を最優先にする。
+   ============================================================ */
+
+/* ===== games: ドット風 ===== */
+body.skin-pixel{
+  background:
+    linear-gradient(rgba(124,255,178,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,255,178,.045) 1px, transparent 1px),
+    linear-gradient(180deg, #0a0d10, #0c1014);
+  background-size:16px 16px, 16px 16px, 100% 100%;
+}
+
+body.skin-pixel .card{
+  border-radius:0;
+  border:2px solid #232b33;
+  background:#0e1116;
+  box-shadow:6px 6px 0 rgba(0,0,0,.45);
+}
+
+body.skin-pixel .card h2::before{
+  content:"▶ ";
+  color:#7CFFB2;
+}
+
+body.skin-pixel .btn{
+  border-radius:0;
+}
+
+body.skin-pixel .btn:hover{
+  box-shadow:3px 3px 0 rgba(0,0,0,.5);
+  transform:translate(-1px,-1px);
+}
+
+/* ===== bbs: 足跡帳ノート ===== */
+body.skin-note{
+  background:
+    repeating-linear-gradient(
+      transparent 0 29px,
+      rgba(124,203,255,.06) 29px 30px
+    ),
+    linear-gradient(180deg, #0b0d11, #0d1016);
+}
+
+body.skin-note .card{
+  border-radius:4px;
+  border:1px solid #2a3038;
+  background:#10141b;
+}
+
+body.skin-note .card:first-of-type{ position:relative; }
+
+/* 来訪記録のハンコ */
+body.skin-note .card:first-of-type::after{
+  content:"記帳";
+  position:absolute;
+  top:14px;
+  right:16px;
+  padding:3px 10px;
+  border:2px solid rgba(255,124,124,.5);
+  border-radius:4px;
+  color:rgba(255,124,124,.62);
+  font-weight:700;
+  font-size:13px;
+  letter-spacing:.22em;
+  transform:rotate(-7deg);
+  pointer-events:none;
+}
+
+/* ===== gallery: 展示室 ===== */
+body.skin-museum{
+  counter-reset:exhibit;
+  background:
+    radial-gradient(700px 280px at 50% -80px, rgba(255,210,124,.05), transparent 70%),
+    linear-gradient(180deg, #0b0c10, #0d0e13);
+}
+
+/* 二重枠＝額装 */
+body.skin-museum .card{
+  border:1px solid #2c2f36;
+  outline:1px solid #1b1e24;
+  outline-offset:5px;
+  border-radius:0;
+  background:#101218;
+}
+
+/* 展示番号プレート（後から注入されるカードにも自動で付番される） */
+body.skin-museum .card > h2:first-of-type::before{
+  counter-increment:exhibit;
+  content:"展示 " counter(exhibit, decimal-leading-zero) " ｜ ";
+  color:#cfa75a;
+  font-size:12px;
+  letter-spacing:.18em;
+}

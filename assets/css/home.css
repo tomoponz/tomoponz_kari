@@ -1,0 +1,338 @@
+/* ============================================================
+   home.css — トップページ専用スタイル（body.home スコープ限定）
+
+   方針：脱グラスモーフィズム
+   - 半透明・blur・グラデーション・装飾シャドウを使わない
+   - 不透明な暗色 + 1px罫線 + 角丸ほぼなし(3px)
+   - アクセントは琥珀(#e8b54a)の1色のみ（赤は「押すな」と403専用）
+   - 等幅フォントは [DIR] 等のラベル・パス表記にだけ使う
+   ※ 他ページに影響しないよう、全セレクタを body.home 配下に置く
+   ============================================================ */
+
+body.home{
+  background:#0c0e11;
+}
+
+/* ナビ（直アクセス時のみ表示される。shell内では .embedded で非表示） */
+body.home .nav{
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  background:#0c0e11;
+  border-bottom:1px solid #262b33;
+}
+
+body.home .card{
+  background:#11141a;
+  border:1px solid #262b33;
+  border-radius:3px;
+  box-shadow:none;
+}
+
+/* 視覚的には隠すが、スクリーンリーダーには読ませるユーティリティ */
+body.home .vh{
+  position:absolute;
+  width:1px; height:1px;
+  margin:-1px; padding:0; border:0;
+  clip-path:inset(50%);
+  overflow:hidden;
+  white-space:nowrap;
+}
+
+/* ===== Index of /tomoponz（案内板本体） ===== */
+body.home .term{
+  border:1px solid #262b33;
+  background:#0e1116;
+  border-radius:3px;
+  margin-bottom:18px;
+}
+
+body.home .term-head{
+  padding:18px 20px 14px;
+  border-bottom:1px solid #262b33;
+}
+
+body.home .term-path{
+  margin:0 0 6px;
+  font:12px/1.5 ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  color:#8a93a3;
+  letter-spacing:.06em;
+}
+
+body.home .term-title{
+  margin:0;
+  font:700 clamp(26px, 5vw, 40px)/1.15 ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  letter-spacing:.01em;
+  color:var(--tx);
+}
+
+body.home .term-title::after{
+  content:"_";
+  color:#e8b54a;
+  animation:home-cursor 1.1s steps(1) infinite;
+}
+
+@keyframes home-cursor{ 50%{ opacity:0; } }
+
+@media (prefers-reduced-motion: reduce){
+  body.home .term-title::after{ animation:none; }
+}
+
+body.home .term-meta{
+  margin:8px 0 0;
+  font:12px/1.6 ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  color:#8a93a3;
+  letter-spacing:.04em;
+}
+
+/* ディレクトリ一覧（実体はただの ul > li > a。SEO/アクセシビリティの本体） */
+body.home .dirlist{
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+
+body.home .dirlist li + li{
+  border-top:1px dashed #20242c;
+}
+
+body.home .dirlist a,
+body.home .dirlist .locked button{
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  width:100%;
+  padding:11px 20px;
+  color:inherit;
+  text-decoration:none;
+}
+
+body.home .dirlist a:hover{
+  background:#151a22;
+  opacity:1;
+}
+
+body.home .dirlist a:focus-visible{
+  background:#151a22;
+  outline:2px solid #e8b54a;
+  outline-offset:-2px;
+}
+
+body.home .d-type{
+  flex:0 0 52px;
+  font:12px/1.7 ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  color:#e8b54a;
+  letter-spacing:.04em;
+}
+
+body.home .d-name{
+  flex:0 0 auto;
+  min-width:11em;
+  font:600 14px/1.7 ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  color:var(--tx);
+}
+
+body.home .d-desc{
+  flex:1 1 auto;
+  font-size:13px;
+  color:#8a93a3;
+}
+
+/* [403] 黒歴史/ 行 */
+body.home .dirlist .locked button{
+  background:none;
+  border:0;
+  font:inherit;
+  text-align:left;
+  cursor:not-allowed;
+}
+
+body.home .locked .d-type{ color:#ff6b6b; }
+body.home .locked .d-name{ color:#727c8e; }
+body.home .locked .d-desc{ color:#727c8e; }
+
+/* システムログ風の小窓 */
+body.home .term-log{
+  padding:12px 20px 16px;
+  border-top:1px solid #262b33;
+  font:12px/1.9 ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  color:#8a93a3;
+}
+
+body.home .term-log p{ margin:0; }
+body.home .term-log .ok{ color:#9ab98a; }
+body.home .term-hint{ color:#727c8e; }
+
+/* ===== README.txt / daily_quote.log（ファイル風カード） ===== */
+body.home .file-name{
+  display:inline-block;
+  margin:0 0 12px;
+  padding:3px 10px;
+  border:1px solid #262b33;
+  border-bottom:2px solid #e8b54a;
+  background:#0e1116;
+  font:600 13px/1.7 ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  letter-spacing:.05em;
+}
+
+/* README.txt のキーバリュー表示 */
+body.home .file-meta{
+  margin:-4px 0 12px;
+  font:11px/1.6 ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  color:#727c8e;
+  letter-spacing:.05em;
+}
+
+body.home .kv{ margin:0; }
+
+body.home .kv-row{
+  display:flex;
+  gap:14px;
+  align-items:baseline;
+  padding:8px 2px;
+}
+
+body.home .kv-row + .kv-row{ border-top:1px dashed #20242c; }
+
+body.home .kv dt{
+  flex:0 0 64px;
+  font:600 12px/1.7 ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  color:#e8b54a;
+  letter-spacing:.08em;
+}
+
+body.home .kv dd{
+  margin:0;
+  font-size:14px;
+  line-height:1.7;
+  color:var(--mut);
+}
+
+body.home .tag{
+  display:inline-block;
+  margin:2px 6px 2px 0;
+  padding:2px 9px;
+  border:1px solid #3a414d;
+  border-radius:2px;
+  background:#171b22;
+  font-size:12px;
+  color:var(--tx);
+}
+
+body.home .term-prompt{
+  margin:12px 0 0;
+  font:13px/1 ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  color:#8a93a3;
+}
+
+body.home .caret{
+  color:#e8b54a;
+  animation:home-cursor 1.1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce){
+  body.home .caret{ animation:none; }
+}
+
+body.home .quoteBox{
+  border:1px solid #262b33;
+  background:#0e1116;
+  border-radius:3px;
+  padding:18px;
+}
+
+body.home .quoteText{
+  font-size:20px;
+  line-height:1.8;
+  margin:0 0 12px;
+}
+
+body.home .quoteBy{
+  color:#8a93a3;
+  margin:0;
+  font-size:13px;
+  letter-spacing:.04em;
+}
+
+body.home .btnrow{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+
+body.home .btnlike{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 16px;
+  border-radius:3px;
+  border:1px solid #3a414d;
+  background:#171b22;
+  color:inherit;
+  font-size:14px;
+  cursor:pointer;
+  text-decoration:none;
+}
+
+body.home .btnlike:hover{
+  border-color:#e8b54a;
+  background:#1b202a;
+  opacity:1;
+}
+
+body.home .btnlike:focus-visible{
+  outline:2px solid #e8b54a;
+  outline-offset:2px;
+}
+
+/* ===== 押すなボタン（旧インラインstyleから移設・見た目は踏襲） ===== */
+body.home #dangerBtn{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  z-index:9999;
+  background:rgba(255,0,0,0.08);
+  border:2px solid #ff4444;
+  color:#ff9999;
+  padding:10px 16px;
+  border-radius:3px;
+  font-size:12px;
+  font-weight:bold;
+  letter-spacing:.1em;
+  cursor:pointer;
+  opacity:.7;
+}
+
+body.home #dangerBtn:hover{ opacity:1; }
+
+/* 隠しクリック領域（位置・サイズは従来どおり） */
+body.home #voidClick{
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:20px;
+  height:20px;
+  cursor:default;
+  z-index:9999;
+}
+
+/* フッター */
+body.home .footer a{
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+
+/* ===== モバイル ===== */
+@media (max-width:640px){
+  body.home .term-head{ padding:14px 14px 12px; }
+  body.home .term-log{ padding:10px 14px 14px; }
+
+  body.home .dirlist a,
+  body.home .dirlist .locked button{
+    flex-wrap:wrap;
+    gap:4px 10px;
+    padding:12px 14px;
+  }
+  body.home .d-name{ min-width:0; }
+  body.home .d-desc{ flex-basis:100%; }
+}
